@@ -103,3 +103,5 @@ Rules for the agent layer:
 | `AGENT_SERVICE_URL`, `AGENT_SERVICE_KEY` | Agents | `web/.env.local` |
 | `WAZUH_API_URL`, `WAZUH_API_USER`, `WAZUH_API_PASSWORD` | Wazuh | `web/.env.local` |
 | `EXECUTOR_MODE` | Web | `simulate` (pretend) or `wazuh` (really block) |
+| `NIGHTWATCH_PUBLIC_URL` | Web | `web/.env.local`: this laptop's LAN address, e.g. `http://192.168.8.50:3000`, so the setup page shows a hook_url Wazuh can reach |
+| `WAZUH_DASHBOARD_URL` (+ optional `WAZUH_DASHBOARD_LINK`) | Wazuh | `web/.env.local`: turns on "Open in Wazuh" links for our team |

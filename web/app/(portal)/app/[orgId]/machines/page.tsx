@@ -1,3 +1,4 @@
+import Link from "next/link";
 import { capitalize, timeAgo } from "@/components/format";
 import { EmptyState, PageHeader, Panel } from "@/components/ui/Panel";
 import { requirePageOrg } from "@/lib/nightwatch/page-auth";
@@ -65,7 +66,12 @@ export default async function MachinesPage({ params }: { params: Promise<{ orgId
             </table>
           </div>
         ) : (
-          <EmptyState title="No machines yet">Machines appear here as soon as your monitoring sends its first alert.</EmptyState>
+          <EmptyState title="No machines yet">
+            Machines appear here as soon as your monitoring sends its first alert.{" "}
+            <Link href={`/app/${orgId}/connect`} className="font-medium text-info hover:underline">
+              Connect your first machine
+            </Link>
+          </EmptyState>
         )}
       </Panel>
     </>

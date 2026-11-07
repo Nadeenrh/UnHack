@@ -8,7 +8,7 @@ const ids: Record<string, string> = {};
 describe.skipIf(!enabled)("portal read APIs and tenant isolation", () => {
   beforeAll(async () => {
     await resetDatabase();
-    for (const slug of ["maple-creek", "northfield-dental", "riverbend-water"]) {
+    for (const slug of ["maple-creek", "northfield-dental", "riverbend-accounting"]) {
       ids[slug] = (await one<{ org_id: string }>(`SELECT org_id FROM organizations WHERE slug = ?`, [slug]))!.org_id;
     }
     ids.ndIncident = (await one<{ incident_id: string }>(
@@ -28,7 +28,7 @@ describe.skipIf(!enabled)("portal read APIs and tenant isolation", () => {
     for (const inc of incidents) {
       const v = validateIncident(inc);
       expect(v.ok, v.ok ? "" : v.error).toBe(true);
-      expect(inc.org.name).toBe("Township of Maple Creek");
+      expect(inc.org.name).toBe("Maple Creek Family Health");
     }
     const demo = incidents.find((i: any) => i.ref === "INC-0001");
     expect(demo.status).toBe("awaiting_approval");
@@ -65,7 +65,7 @@ describe.skipIf(!enabled)("portal read APIs and tenant isolation", () => {
   it("dashboard snapshot reflects health", async () => {
     const cookie = await signIn("omar@riverbend.test");
     const { GET } = await import("@/app/api/v1/orgs/[orgId]/route");
-    const snap = (await body(await GET(req("GET", `/api/v1/orgs/${ids["riverbend-water"]}`, { cookie }), ctx({ orgId: ids["riverbend-water"] })))).data;
+    const snap = (await body(await GET(req("GET", `/api/v1/orgs/${ids["riverbend-accounting"]}`, { cookie }), ctx({ orgId: ids["riverbend-accounting"] })))).data;
     expect(snap).toMatchObject({ health: "healthy", open_incidents: 0, pending_approvals: 0, assets_total: 2 });
     expect(snap.access).toEqual({ via: "membership", role: "owner" });
   });
@@ -99,9 +99,9 @@ describe.skipIf(!enabled)("portal read APIs and tenant isolation", () => {
     const overview = await import("@/app/api/v1/provider/overview/route");
     const snaps = (await body(await overview.GET(req("GET", "/api/v1/provider/overview", { cookie }), ctx()))).data;
     expect(snaps.map((s: any) => [s.org.name, s.health])).toEqual([
+      ["Maple Creek Family Health", "attention"],
       ["Northfield Dental Clinic", "attention"],
-      ["Riverbend Water Utility", "healthy"],
-      ["Township of Maple Creek", "attention"],
+      ["Riverbend Accounting", "healthy"],
     ]);
 
     const list = await import("@/app/api/v1/orgs/[orgId]/incidents/route");

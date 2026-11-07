@@ -9,6 +9,12 @@ Kali (attacker) ──► victim VM (Wazuh agent) ──► Wazuh manager ──
 
 ## Install (on the Wazuh manager)
 
+Easiest: sign in to Nightwatch and open **Connect machines**. It shows these steps with your
+server address and key filled in, and serves this script at `/downloads/custom-nightwatch.py`
+(a copy kept in `web/public/downloads/`; a test fails if the two differ, so edit both).
+
+By hand:
+
 ```bash
 sudo cp custom-nightwatch.py /var/ossec/integrations/custom-nightwatch.py
 # Wazuh launches integrations through a small shell wrapper. Reuse the one that ships with Wazuh:
@@ -42,4 +48,4 @@ Then `sudo systemctl restart wazuh-manager` and watch `/var/ossec/logs/integrati
 python3 custom-nightwatch.py alert.json nwk_dev_northfield_0001 http://localhost:3000/api/v1/ingest/wazuh
 ```
 
-`alert.json` is one alert object, e.g. the first item of `web/tools/replay/samples/cityhall-attack.json`.
+`alert.json` is one alert object, e.g. the first item of `web/tools/replay/samples/clinic-attack.json`.

@@ -29,7 +29,7 @@ docker compose --env-file .env.production -f docker-compose-prod.yml up -d --bui
 Demo logins and ingest keys: [`db/nightwatch/README.md`](db/nightwatch/README.md). Replay a sample attack:
 
 ```bash
-node tools/replay/replay.mjs tools/replay/samples/cityhall-attack.json \
+node tools/replay/replay.mjs tools/replay/samples/clinic-attack.json \
   --url http://localhost:3000 --key nwk_dev_northfield_0001 --fresh --gap 1500
 ```
 

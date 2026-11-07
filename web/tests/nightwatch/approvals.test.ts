@@ -112,7 +112,7 @@ describe.skipIf(!enabled)("approvals and execution", () => {
   });
 
   it("unanswered approvals expire and can no longer be approved", async () => {
-    // Make the Maple Creek clerk-laptop isolation wait again, then let its window lapse.
+    // Make the Maple Creek doctor-laptop isolation wait again, then let its window lapse.
     const inc4 = (await one<{ incident_id: string }>(`SELECT incident_id FROM incidents WHERE org_id = ? AND ref = 'INC-0004'`, [mc]))!.incident_id;
     const id = (await one<{ action_id: string }>(`SELECT action_id FROM actions WHERE incident_id = ?`, [inc4]))!.action_id;
     await exec(
@@ -121,7 +121,7 @@ describe.skipIf(!enabled)("approvals and execution", () => {
        WHERE action_id = ?`,
       [id]
     );
-    const res = await approve(mc, id, await signIn("dana@maplecreek.test"), "CLERK-LAPTOP-02");
+    const res = await approve(mc, id, await signIn("dana@maplecreek.test"), "DOCTOR-LAPTOP");
     expect(res.status).toBe(409);
     expect((await body(res)).message).toMatch(/already expired/);
     const ev = await one<{ n: number }>(`SELECT COUNT(*) AS n FROM audit_log WHERE action_id = ? AND event = 'action_expired'`, [id]);
@@ -155,7 +155,7 @@ describe("Wazuh executor (against a fake Wazuh API)", () => {
 
   const action = (type: string, target: string) => ({ type, target }) as unknown as ActionRow;
   const assets = [
-    { hostname: "CITYHALL-01", ip: "192.168.8.20", os: "Windows 11 Pro", kind: "endpoint" as const, agent_ref: "001", agent_status: "online" as const },
+    { hostname: "RECEPTION-PC", ip: "192.168.8.20", os: "Windows 11 Pro", kind: "endpoint" as const, agent_ref: "001", agent_status: "online" as const },
     { hostname: "DNS-FILTER", ip: "192.168.8.2", os: "Pi-hole", kind: "network" as const, agent_ref: null, agent_status: "online" as const },
   ];
 
@@ -179,7 +179,7 @@ describe("Wazuh executor (against a fake Wazuh API)", () => {
   });
 
   it("says plainly when an action type isn't automated yet", async () => {
-    const result = await wazuhExecutor().run({ action: action("isolate_host", "CITYHALL-01"), assets });
+    const result = await wazuhExecutor().run({ action: action("isolate_host", "RECEPTION-PC"), assets });
     expect(result).toMatchObject({ ok: false });
     expect(result.detail).toMatch(/manually/);
   });
