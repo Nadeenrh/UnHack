@@ -1,0 +1,12 @@
+# syntax=docker/dockerfile:1
+# Dev server in Docker, for teammates who don't want Node on their machine.
+# Fastest option is still `npm run dev` on the host; this is the no-install alternative.
+# Used by the `app` profile in docker-compose-dev.yml.
+FROM node:22-slim
+WORKDIR /app
+ENV NEXT_TELEMETRY_DISABLED=1
+COPY package.json package-lock.json ./
+RUN --mount=type=cache,target=/root/.npm npm ci --no-audit --no-fund
+COPY . .
+EXPOSE 3000
+CMD ["npm", "run", "dev", "--", "-H", "0.0.0.0"]

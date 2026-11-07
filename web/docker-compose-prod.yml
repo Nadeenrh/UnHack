@@ -1,0 +1,40 @@
+# Production-style run: app + MySQL. Configuration comes from .env.production at runtime
+# (never baked into the image). Create it from .env.example with real values.
+services:
+  db:
+    image: mysql:8.4
+    restart: always
+    volumes:
+      - ./db/nightwatch/init/001_schema.sql:/docker-entrypoint-initdb.d/001_schema.sql:ro
+      - nightwatch_mysql:/var/lib/mysql
+    environment:
+      MYSQL_ROOT_PASSWORD: ${DB_PASSWORD}
+    healthcheck:
+      test: ["CMD-SHELL", "mysqladmin ping -h 127.0.0.1 -uroot -p$$MYSQL_ROOT_PASSWORD --silent"]
+      interval: 5s
+      timeout: 3s
+      retries: 30
+    networks: [app-network]
+
+  app:
+    restart: unless-stopped
+    build:
+      context: .
+      dockerfile: Dockerfile.prod
+    env_file: [.env.production]
+    environment:
+      DB_HOST: db
+      DB_PORT: "3306"
+    ports:
+      - "${APP_PORT:-3000}:3000"
+    depends_on:
+      db:
+        condition: service_healthy
+    networks: [app-network]
+
+volumes:
+  nightwatch_mysql:
+
+networks:
+  app-network:
+    driver: bridge

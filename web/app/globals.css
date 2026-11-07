@@ -1,0 +1,83 @@
+@import "tailwindcss";
+
+/*
+  Nightwatch design tokens (dark, Pi-hole-style).
+  - sidebar: darkest surface (nav rail, sign-in backdrop)
+  - canvas:  page background
+  - panel:   raised surfaces; raised: hover / inset rows on a panel
+  - ink:     main text (light). night: text that sits ON a bright fill (tiles, amber buttons)
+  - lantern: ONLY for "needs your decision" (pending approvals, approve button)
+  - ok / bad / info / sev-*: semantic. Bright enough to read as text on panel (4.5:1+),
+    and used as fills with text-night on top. Don't reuse them for decoration.
+*/
+@theme {
+  --font-sans: "IBM Plex Sans", ui-sans-serif, system-ui, sans-serif;
+  --font-mono: "IBM Plex Mono", ui-monospace, SFMono-Regular, Menlo, monospace;
+
+  --color-night: #0a0f1c;
+  --color-sidebar: #0b1120;
+  --color-canvas: #0f1626;
+  --color-panel: #172034;
+  --color-raised: #1e2942;
+  --color-line: #28344f;
+  --color-ink: #e6ebf4;
+  --color-ink-soft: #c3cbdb;
+  --color-muted: #94a2bc;
+
+  --color-lantern: #f2b632;
+  --color-lantern-soft: #3a2c0c;
+  --color-lantern-deep: #f6c860;
+
+  --color-sev-critical: #ef5350;
+  --color-sev-high: #f5813a;
+  --color-sev-medium: #d9c36a;
+  --color-sev-low: #5fb3a6;
+
+  --color-ok: #3dbd7d;
+  --color-ok-soft: #12301f;
+  --color-bad: #f2675c;
+  --color-bad-soft: #3a1818;
+  --color-info: #5b9cf0;
+  --color-info-soft: #14284a;
+}
+
+html {
+  color-scheme: dark;
+}
+
+html,
+body {
+  background: var(--color-canvas);
+  color: var(--color-ink);
+}
+
+body {
+  font-family: var(--font-sans);
+}
+
+/* Visible keyboard focus everywhere. */
+:focus-visible {
+  outline: 2px solid var(--color-info);
+  outline-offset: 2px;
+}
+
+input,
+select,
+textarea {
+  background-color: var(--color-canvas);
+  color: var(--color-ink);
+}
+
+::placeholder {
+  color: var(--color-muted);
+  opacity: 0.8;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation: none !important;
+    transition: none !important;
+  }
+}

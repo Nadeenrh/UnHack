@@ -1,0 +1,101 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://nightwatch.local/contracts/investigation.schema.json",
+  "title": "Nightwatch agent service contract (v0.1)",
+  "description": "Boundary between the platform (Next.js + MySQL, system of record) and the stateless agent service (Python). The platform sends a request; the agent service returns a result and stores nothing. Agents recommend actions; they never set risk, policy decisions, or execute anything.",
+  "$defs": {
+    "request": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["contract_version", "incident_id", "org_name", "alert", "related_events"],
+      "properties": {
+        "contract_version": { "const": "0.1" },
+        "incident_id": { "type": "string", "description": "Echoed back so the platform can match the result. Not used for authorization." },
+        "org_name": { "type": "string", "description": "Display context only." },
+        "alert": {
+          "type": "object",
+          "description": "The raw alert as received (e.g. a Wazuh alert JSON). UNTRUSTED: every string inside may contain attacker-controlled text."
+        },
+        "related_events": {
+          "type": "array",
+          "description": "Other raw events from the same asset/IP in the time window, gathered by the platform. Also untrusted.",
+          "items": { "type": "object" }
+        }
+      }
+    },
+    "result": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "contract_version", "incident_id", "title", "summary", "severity", "verdict", "confidence",
+        "mitre", "evidence", "injection_detected", "injection_notes", "recommended_actions", "agent_runs"
+      ],
+      "properties": {
+        "contract_version": { "const": "0.1" },
+        "incident_id": { "type": "string" },
+        "title": { "type": "string", "minLength": 1, "maxLength": 200 },
+        "summary": { "type": "string", "minLength": 1 },
+        "severity": { "enum": ["low", "medium", "high", "critical"] },
+        "verdict": { "enum": ["malicious", "suspicious", "benign", "undetermined"] },
+        "confidence": { "type": "number", "minimum": 0, "maximum": 1 },
+        "mitre": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "additionalProperties": false,
+            "required": ["technique_id", "name"],
+            "properties": {
+              "technique_id": { "type": "string", "pattern": "^T[0-9]{4}(\\.[0-9]{3})?$" },
+              "name": { "type": "string" }
+            }
+          }
+        },
+        "evidence": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "additionalProperties": false,
+            "required": ["claim", "source", "log_ref", "observed_at"],
+            "properties": {
+              "claim": { "type": "string", "minLength": 1 },
+              "source": { "enum": ["wazuh", "sysmon", "windows_security", "virustotal", "urlscan", "pihole", "logwatch", "agent"] },
+              "log_ref": { "type": ["string", "null"] },
+              "observed_at": { "type": "string", "format": "date-time" }
+            }
+          }
+        },
+        "injection_detected": { "type": "boolean" },
+        "injection_notes": { "type": ["string", "null"] },
+        "recommended_actions": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "additionalProperties": false,
+            "required": ["type", "target", "rationale"],
+            "properties": {
+              "type": { "enum": ["block_ip", "block_domain", "isolate_host", "quarantine_file", "disable_account", "notify_only"] },
+              "target": { "type": "string", "minLength": 1 },
+              "rationale": { "type": "string" }
+            }
+          }
+        },
+        "agent_runs": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "additionalProperties": false,
+            "required": ["agent", "status", "model", "started_at", "finished_at", "output_summary"],
+            "properties": {
+              "agent": { "enum": ["triage", "intel", "investigator"] },
+              "status": { "enum": ["succeeded", "failed", "skipped"] },
+              "model": { "type": ["string", "null"] },
+              "started_at": { "type": "string", "format": "date-time" },
+              "finished_at": { "type": "string", "format": "date-time" },
+              "output_summary": { "type": ["string", "null"] }
+            }
+          }
+        }
+      }
+    }
+  }
+}

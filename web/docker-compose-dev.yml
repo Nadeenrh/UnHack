@@ -1,0 +1,51 @@
+# Dev stack.
+#
+#   Database only (fastest: run Next on your machine with `npm run dev`):
+#     docker compose --env-file .env.local -f docker-compose-dev.yml up -d db
+#
+#   Database + app in Docker (no Node install needed), http://localhost:3000:
+#     docker compose --env-file .env.local -f docker-compose-dev.yml --profile app up -d --build
+services:
+
+  db:
+    image: mysql:8.4
+    container_name: mysql_db
+    restart: unless-stopped
+    ports:
+      - "${DB_PORT:-3306}:3306"
+    volumes:
+      # Nightwatch schema + dev fixtures. MySQL only runs these on an EMPTY data volume,
+      # so restarts never wipe data. To start over on purpose, see db/nightwatch/README.md.
+      - ./db/nightwatch/init:/docker-entrypoint-initdb.d:ro
+      # Named volume so data survives `docker compose down` / container re-creation.
+      - nightwatch_mysql:/var/lib/mysql
+    environment:
+      MYSQL_ROOT_PASSWORD: ${DB_PASSWORD}
+    healthcheck:
+      test: ["CMD-SHELL", "mysqladmin ping -h 127.0.0.1 -uroot -p$$MYSQL_ROOT_PASSWORD --silent"]
+      interval: 5s
+      timeout: 3s
+      retries: 30
+
+  app:
+    profiles: [app]
+    build:
+      context: .
+      dockerfile: Dockerfile.dev
+    env_file: [.env.local]
+    environment:
+      DB_HOST: db
+      DB_PORT: "3306"
+      WATCHPACK_POLLING: "true"   # file changes are seen through the bind mount on Mac/Windows
+    ports:
+      - "${APP_PORT:-3000}:3000"
+    volumes:
+      - .:/app
+      - /app/node_modules          # keep the container's own node_modules
+      - /app/.next
+    depends_on:
+      db:
+        condition: service_healthy
+
+volumes:
+  nightwatch_mysql:

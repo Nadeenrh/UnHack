@@ -1,0 +1,19 @@
+# Keep the build context small: Docker sends all of this to the daemon on every build.
+node_modules
+.next
+coverage
+.git
+.gitignore
+.env*
+!.env.example
+secrets
+Dockerfile*
+docker-compose*
+*.md
+tests
+tools
+db
+docs
+.vscode
+.idea
+*.log

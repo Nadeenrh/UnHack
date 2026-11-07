@@ -1,0 +1,163 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://nightwatch.local/contracts/incident.schema.json",
+  "title": "Nightwatch Incident (contract v0.1)",
+  "description": "What the platform API returns for one incident. The server builds this; clients never send org identity. See contracts/README.md.",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "contract_version", "id", "ref", "org", "title", "summary", "severity", "verdict",
+    "confidence", "status", "data_source", "detected_at", "created_at", "updated_at",
+    "assets", "source_alert_ids", "mitre", "evidence", "injection_detected",
+    "injection_notes", "agent_runs", "actions"
+  ],
+  "properties": {
+    "contract_version": { "const": "0.1" },
+    "id": { "$ref": "#/$defs/uuid" },
+    "ref": { "type": "string", "pattern": "^INC-[0-9]{4,}$", "description": "Human-friendly number, unique within an organization." },
+    "org": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["id", "name"],
+      "properties": {
+        "id": { "$ref": "#/$defs/uuid" },
+        "name": { "type": "string", "minLength": 1 }
+      }
+    },
+    "title": { "type": "string", "minLength": 1, "maxLength": 200 },
+    "summary": { "type": "string", "minLength": 1, "description": "Plain-English explanation for a non-specialist IT person." },
+    "severity": { "$ref": "#/$defs/severity" },
+    "verdict": { "enum": ["malicious", "suspicious", "benign", "undetermined"] },
+    "confidence": { "type": "number", "minimum": 0, "maximum": 1 },
+    "status": {
+      "enum": ["open", "investigating", "awaiting_approval", "contained", "resolved", "false_positive"]
+    },
+    "data_source": {
+      "enum": ["live", "replay", "fixture"],
+      "description": "UI must label anything that is not live."
+    },
+    "detected_at": { "$ref": "#/$defs/timestamp" },
+    "created_at": { "$ref": "#/$defs/timestamp" },
+    "updated_at": { "$ref": "#/$defs/timestamp" },
+    "assets": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": ["id", "hostname", "ip", "kind"],
+        "properties": {
+          "id": { "$ref": "#/$defs/uuid" },
+          "hostname": { "type": "string" },
+          "ip": { "type": ["string", "null"] },
+          "kind": { "enum": ["endpoint", "server", "network", "other"] }
+        }
+      }
+    },
+    "source_alert_ids": { "type": "array", "items": { "type": "string" } },
+    "mitre": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": ["technique_id", "name"],
+        "properties": {
+          "technique_id": { "type": "string", "pattern": "^T[0-9]{4}(\\.[0-9]{3})?$" },
+          "name": { "type": "string" }
+        }
+      }
+    },
+    "evidence": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": ["id", "claim", "source", "log_ref", "observed_at"],
+        "properties": {
+          "id": { "type": "integer", "minimum": 1 },
+          "claim": { "type": "string", "minLength": 1 },
+          "source": { "$ref": "#/$defs/evidence_source" },
+          "log_ref": { "type": ["string", "null"], "description": "Pointer to the underlying record (e.g. Wazuh alert id, event id). Every claim on the card should have one." },
+          "observed_at": { "$ref": "#/$defs/timestamp" }
+        }
+      }
+    },
+    "injection_detected": { "type": "boolean", "description": "Log content contained text addressed to the AI. Flag only; detection is best-effort, not a guarantee." },
+    "injection_notes": { "type": ["string", "null"] },
+    "agent_runs": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": ["id", "agent", "status", "model", "started_at", "finished_at", "output_summary"],
+        "properties": {
+          "id": { "$ref": "#/$defs/uuid" },
+          "agent": { "enum": ["triage", "intel", "investigator"] },
+          "status": { "enum": ["running", "succeeded", "failed", "skipped"] },
+          "model": { "type": ["string", "null"], "description": "null = deterministic rule-based fallback." },
+          "started_at": { "$ref": "#/$defs/timestamp" },
+          "finished_at": { "oneOf": [{ "$ref": "#/$defs/timestamp" }, { "type": "null" }] },
+          "output_summary": { "type": ["string", "null"] }
+        }
+      }
+    },
+    "actions": { "type": "array", "items": { "$ref": "#/$defs/action" } }
+  },
+  "$defs": {
+    "uuid": { "type": "string", "pattern": "^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$" },
+    "timestamp": { "type": "string", "format": "date-time" },
+    "severity": { "enum": ["low", "medium", "high", "critical"] },
+    "evidence_source": { "enum": ["wazuh", "sysmon", "windows_security", "virustotal", "urlscan", "pihole", "logwatch", "agent"] },
+    "action_type": { "enum": ["block_ip", "block_domain", "isolate_host", "quarantine_file", "disable_account", "notify_only"] },
+    "action": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "id", "type", "target", "risk", "policy_decision", "status", "rationale",
+        "requested_at", "decided_by", "decided_at", "result"
+      ],
+      "properties": {
+        "id": { "$ref": "#/$defs/uuid" },
+        "type": { "$ref": "#/$defs/action_type" },
+        "target": { "type": "string", "minLength": 1, "description": "Exactly what the action touches (IP, domain, hostname, file hash, account). Approval is bound to this value." },
+        "risk": { "enum": ["low", "high", "critical"], "description": "Set by server policy, never by an agent." },
+        "policy_decision": { "enum": ["auto", "ask", "never"], "description": "Set by server policy, never by an agent." },
+        "status": {
+          "enum": ["proposed", "awaiting_approval", "approved", "executing", "succeeded", "failed", "denied", "expired"]
+        },
+        "rationale": { "type": "string", "description": "Why the agents recommend it, in plain English." },
+        "requested_at": { "$ref": "#/$defs/timestamp" },
+        "decided_by": {
+          "oneOf": [
+            { "type": "null" },
+            {
+              "type": "object",
+              "additionalProperties": false,
+              "required": ["user_id", "name", "kind"],
+              "properties": {
+                "user_id": { "oneOf": [{ "$ref": "#/$defs/uuid" }, { "type": "null" }] },
+                "name": { "type": "string" },
+                "kind": { "enum": ["human", "policy"] }
+              }
+            }
+          ]
+        },
+        "decided_at": { "oneOf": [{ "$ref": "#/$defs/timestamp" }, { "type": "null" }] },
+        "result": {
+          "oneOf": [
+            { "type": "null" },
+            {
+              "type": "object",
+              "additionalProperties": false,
+              "required": ["verified", "detail", "completed_at"],
+              "properties": {
+                "verified": { "type": "boolean", "description": "true only when the platform checked the effect actually happened." },
+                "detail": { "type": "string" },
+                "completed_at": { "$ref": "#/$defs/timestamp" }
+              }
+            }
+          ]
+        }
+      }
+    }
+  }
+}
