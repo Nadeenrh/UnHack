@@ -4,9 +4,11 @@ import { capitalize, formatDateTime, formatTime } from "@/components/format";
 import { ActionPanel } from "@/components/incidents/ActionPanel";
 import { DataSourceBadge, IncidentStatusBadge, SeverityBadge } from "@/components/ui/Badges";
 import { Panel } from "@/components/ui/Panel";
-import { isUuid } from "@/lib/nightwatch/access";
+import { isProvider, isUuid } from "@/lib/nightwatch/access";
+import { placeholders, rows } from "@/lib/nightwatch/db";
 import { expireStaleActions, loadIncident } from "@/lib/nightwatch/incidents";
 import { canApprove, requirePageOrg } from "@/lib/nightwatch/page-auth";
+import { wazuhAgentLink, wazuhHomeLink } from "@/lib/nightwatch/wazuh-link";
 
 const SOURCE_LABEL: Record<string, string> = {
   wazuh: "Wazuh",
@@ -21,11 +23,25 @@ const SOURCE_LABEL: Record<string, string> = {
 
 export default async function IncidentPage({ params }: { params: Promise<{ orgId: string; incidentId: string }> }) {
   const { orgId, incidentId } = await params;
-  const { access } = await requirePageOrg(orgId);
+  const { session, access } = await requirePageOrg(orgId);
   if (!isUuid(incidentId)) notFound();
   await expireStaleActions(orgId);
   const incident = await loadIncident(orgId, incidentId);
   if (!incident) notFound();
+
+  // Provider staff get a way into the raw Wazuh view. Clients only ever see the plain-language page.
+  const wazuhHome = isProvider(session) ? wazuhHomeLink() : null;
+  const wazuhLinks = new Map<string, string>();
+  if (wazuhHome && incident.assets.length) {
+    const refs = await rows<{ asset_id: string; hostname: string; agent_ref: string | null }>(
+      `SELECT asset_id, hostname, agent_ref FROM assets WHERE org_id = ? AND asset_id IN (${placeholders(incident.assets.length)})`,
+      [orgId, ...incident.assets.map((a) => a.id)]
+    );
+    for (const r of refs) {
+      const link = wazuhAgentLink(r);
+      if (link) wazuhLinks.set(r.asset_id, link);
+    }
+  }
 
   const approver = canApprove(access);
   const readOnlyReason =
@@ -101,7 +117,14 @@ export default async function IncidentPage({ params }: { params: Promise<{ orgId
             <ul>
               {incident.assets.map((a) => (
                 <li key={a.id} className="border-b border-line px-5 py-3 last:border-0">
-                  <div className="font-mono text-sm font-medium">{a.hostname}</div>
+                  <div className="flex items-baseline justify-between gap-2">
+                    <span className="font-mono text-sm font-medium">{a.hostname}</span>
+                    {wazuhLinks.has(a.id) && (
+                      <a href={wazuhLinks.get(a.id)} target="_blank" rel="noreferrer" className="text-xs font-medium text-info hover:underline">
+                        Wazuh events
+                      </a>
+                    )}
+                  </div>
                   <div className="text-xs text-muted">
                     {capitalize(a.kind)}
                     {a.ip && (
@@ -131,6 +154,22 @@ export default async function IncidentPage({ params }: { params: Promise<{ orgId
                   </li>
                 ))}
               </ul>
+            </Panel>
+          )}
+
+          {wazuhHome && (
+            <Panel title="For the Nightwatch team">
+              <p className="px-5 pt-3 text-sm text-muted">The full alert history and raw logs are in Wazuh. The client doesn&apos;t see this panel.</p>
+              <div className="px-5 py-3">
+                <a
+                  href={wazuhHome}
+                  target="_blank"
+                  rel="noreferrer"
+                  className="inline-block rounded-md px-3 py-1.5 text-sm font-medium ring-1 ring-line hover:bg-canvas"
+                >
+                  Open in Wazuh
+                </a>
+              </div>
             </Panel>
           )}
 

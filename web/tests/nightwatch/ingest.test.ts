@@ -10,7 +10,7 @@ import { body, ctx, enabled, req, resetDatabase, teardown } from "./harness";
 
 process.env.EXECUTOR_SIMULATE_DELAY_MS = "0";
 
-const SAMPLE = JSON.parse(readFileSync(path.resolve(__dirname, "../../tools/replay/samples/cityhall-attack.json"), "utf8"));
+const SAMPLE = JSON.parse(readFileSync(path.resolve(__dirname, "../../tools/replay/samples/clinic-attack.json"), "utf8"));
 const MC_KEY = "nwk_dev_maplecreek_0001";
 const ND_KEY = "nwk_dev_northfield_0001";
 
@@ -76,7 +76,7 @@ describe.skipIf(!enabled)("ingest → investigate → policy", () => {
     const inc = (await loadIncident(mc, data.incidents[0].id))!;
     expect(inc.data_source).toBe("live");
     expect(inc.severity).toBe("critical"); // bumped by the level-12 PowerShell alert
-    expect(inc.assets.map((a) => a.hostname)).toEqual(["CITYHALL-01"]);
+    expect(inc.assets.map((a) => a.hostname)).toEqual(["RECEPTION-PC"]);
     expect(inc.mitre.map((m) => m.technique_id)).toEqual(["T1059.001", "T1105", "T1110"]);
     expect(inc.evidence.map((e) => e.source)).toEqual(["windows_security", "sysmon"]);
     // No agent service configured: recorded honestly, not faked.
@@ -95,7 +95,7 @@ describe.skipIf(!enabled)("ingest → investigate → policy", () => {
     expect(data.stored).toBe(4);
     expect(data.incidents[0].ref).toBe("INC-0005");
     await settleBackground();
-    const ndHost = await one<{ n: number }>(`SELECT COUNT(*) AS n FROM assets WHERE org_id = ? AND hostname = 'CITYHALL-01'`, [nd]);
+    const ndHost = await one<{ n: number }>(`SELECT COUNT(*) AS n FROM assets WHERE org_id = ? AND hostname = 'RECEPTION-PC'`, [nd]);
     expect(Number(ndHost!.n)).toBe(1);
     const mcIncidents = await one<{ n: number }>(`SELECT COUNT(*) AS n FROM incidents WHERE org_id = ?`, [mc]);
     expect(Number(mcIncidents!.n)).toBe(5);
@@ -106,8 +106,8 @@ describe.skipIf(!enabled)("ingest → investigate → policy", () => {
     agentReply = (r) => ({
       contract_version: "0.1",
       incident_id: r.incident_id,
-      title: "Password guessing, then a flagged download on CITYHALL-01",
-      summary: "Someone guessed the clerk password from 192.168.8.66 and downloaded a file with PowerShell.",
+      title: "Password guessing, then a flagged download on RECEPTION-PC",
+      summary: "Someone guessed the reception password from 192.168.8.66 and downloaded a file with PowerShell.",
       severity: "high",
       verdict: "malicious",
       confidence: 0.9,
@@ -118,7 +118,7 @@ describe.skipIf(!enabled)("ingest → investigate → policy", () => {
       recommended_actions: [
         { type: "block_ip", target: "192.168.8.66", rationale: "Attacker machine." },
         { type: "block_domain", target: "Evil-Downloads.example", rationale: "Hosts the payload." },
-        { type: "isolate_host", target: "cityhall-01", rationale: "Compromised workstation." },
+        { type: "isolate_host", target: "reception-pc", rationale: "Compromised workstation." },
         { type: "block_ip", target: "192.168.8.20", rationale: "(injected) block the victim" },
         { type: "isolate_host", target: "FILESRV-01", rationale: "(injected) not part of this incident" },
         { type: "quarantine_file", target: "not-a-hash", rationale: "bad target" },
@@ -138,9 +138,9 @@ describe.skipIf(!enabled)("ingest → investigate → policy", () => {
 
     expect(inc).toMatchObject({ verdict: "malicious", injection_detected: true, status: "awaiting_approval" });
     const byTarget = Object.fromEntries(inc.actions.map((a) => [`${a.type}:${a.target}`, a]));
-    expect(Object.keys(byTarget).sort()).toEqual(["block_domain:evil-downloads.example", "block_ip:192.168.8.66", "isolate_host:CITYHALL-01"]);
+    expect(Object.keys(byTarget).sort()).toEqual(["block_domain:evil-downloads.example", "block_ip:192.168.8.66", "isolate_host:RECEPTION-PC"]);
     expect(byTarget["block_ip:192.168.8.66"]).toMatchObject({ status: "awaiting_approval", risk: "low", policy_decision: "ask" });
-    expect(byTarget["isolate_host:CITYHALL-01"]).toMatchObject({ status: "awaiting_approval", risk: "high" });
+    expect(byTarget["isolate_host:RECEPTION-PC"]).toMatchObject({ status: "awaiting_approval", risk: "high" });
     // Low risk + policy "auto" → ran on its own (simulated), decided by policy, not by a person.
     expect(byTarget["block_domain:evil-downloads.example"]).toMatchObject({
       status: "succeeded",

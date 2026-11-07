@@ -81,7 +81,7 @@ Demo scenarios, best first:
 
 Record one run's alerts (`/var/ossec/logs/alerts/alerts.json`) and save them as a replay sample, so the pitch still works if the lab misbehaves on stage.
 
-## 6. What we have, what we don't need, what we still need
+## 6. What we have and what we still need
 
 **Have (built and tested):** sign-up that creates the org, owner, default policies, first site and a one-time ingest key; login, roles and multi-tenant access rules; Wazuh ingest with dedupe and incident correlation; contract validation and safety checks on every AI recommendation; policy engine (auto / ask / never) with an approval window; Wazuh `block_ip` executor plus a simulate mode; tamper-evident audit log; client and provider portals; fixtures; replay tool; 36 tests.
 
@@ -90,7 +90,5 @@ Record one run's alerts (`/var/ossec/logs/alerts/alerts.json`) and save them as 
 
 1. Agent service (section 4). Without it the AI part of the demo is fixtures only.
 2. Lab + forwarder installed on the Wazuh manager (section 5). Verify the Wazuh executor against the real manager.
-3. "Connect your first machine" page after sign-up: show the `<integration>` snippet with the org's ingest key filled in (web layer).
-4. Privacy tokenizing step (section 3).
-5. Demo story for SMEs: the replay sample and the "Township of Maple Creek" fixture are municipality-framed. Rename them to a clinic in `tools/fixtures/build_fixtures.py` and regenerate.
-6. Later, not for the demo: email verification, password reset, inviting teammates to an org, login throttling that survives restarts.
+3. Privacy tokenizing step (section 3).
+4. Later, not for the demo: email verification, password reset, inviting teammates to an org, login throttling that survives restarts.

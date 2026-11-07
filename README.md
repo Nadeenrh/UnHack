@@ -25,7 +25,7 @@ npm run dev                     # http://localhost:3000
 Demo login and keys are in [`web/db/nightwatch/README.md`](web/db/nightwatch/README.md). Fake an attack with:
 
 ```bash
-node tools/replay/replay.mjs tools/replay/samples/cityhall-attack.json --url http://localhost:3000 --key nwk_dev_northfield_0001 --fresh --gap 1500
+node tools/replay/replay.mjs tools/replay/samples/clinic-attack.json --url http://localhost:3000 --key nwk_dev_northfield_0001 --fresh --gap 1500
 ```
 
 ## Rules for this repo

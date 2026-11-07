@@ -58,11 +58,11 @@ All fixture users share the password `pass123`. **Dev only. Never use this in a 
 |---|---|
 | `admin@nw.test` | provider_admin (sees all clients) |
 | `support@nw.test` | provider_staff |
-| `dana@maplecreek.test` | owner, Township of Maple Creek |
-| `sam@maplecreek.test` | viewer, Township of Maple Creek |
+| `dana@maplecreek.test` | owner, Maple Creek Family Health |
+| `sam@maplecreek.test` | viewer, Maple Creek Family Health |
 | `leah@northfield.test` | owner, Northfield Dental Clinic |
 | `chris@northfield.test` | approver, Northfield Dental Clinic |
-| `omar@riverbend.test` | owner, Riverbend Water Utility |
+| `omar@riverbend.test` | owner, Riverbend Accounting |
 
 Dev ingest keys (for posting test alerts): `nwk_dev_maplecreek_0001`, `nwk_dev_northfield_0001`, `nwk_dev_riverbend_0001`. Only their SHA-256 hashes are in the database.
 

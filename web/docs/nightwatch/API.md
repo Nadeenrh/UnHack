@@ -62,7 +62,7 @@ The overview is status-level only. To open a client's full workspace, start a su
 
 Returns `{ received, stored, duplicates, ignored, incidents: [{ id, ref, created }] }`. Alerts at or above `INGEST_MIN_LEVEL` (default 7) open or join an incident on the same machine (30-minute window); lower ones are kept as context for the agents.
 
-Replay recorded alerts: `node tools/replay/replay.mjs tools/replay/samples/cityhall-attack.json --key <ingest key> --fresh --gap 1500`
+Replay recorded alerts: `node tools/replay/replay.mjs tools/replay/samples/clinic-attack.json --key <ingest key> --fresh --gap 1500`
 
 ## Agent service (contract for the Python service)
 

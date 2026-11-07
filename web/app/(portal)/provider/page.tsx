@@ -6,6 +6,7 @@ import { PageHeader } from "@/components/ui/Panel";
 import { StatTile } from "@/components/ui/StatTile";
 import { requirePageProvider } from "@/lib/nightwatch/page-auth";
 import { snapshots } from "@/lib/nightwatch/snapshots";
+import { wazuhHomeLink } from "@/lib/nightwatch/wazuh-link";
 
 export const metadata = { title: "Clients" };
 
@@ -15,6 +16,7 @@ export default async function ProviderOverview() {
   await requirePageProvider();
   const clients = (await snapshots()).sort((a, b) => ORDER[a.health] - ORDER[b.health] || a.org.name.localeCompare(b.org.name));
 
+  const wazuh = wazuhHomeLink();
   const pending = clients.reduce((n, c) => n + c.pending_approvals, 0);
   const open = clients.reduce((n, c) => n + c.open_incidents, 0);
   const attention = clients.filter((c) => c.health === "attention").length;
@@ -34,14 +36,14 @@ export default async function ProviderOverview() {
 
       <div className="mt-6 space-y-3">
         {clients.map((c) => (
-          <ClientCard key={c.org.id} c={c} />
+          <ClientCard key={c.org.id} c={c} wazuh={wazuh} />
         ))}
       </div>
     </>
   );
 }
 
-function ClientCard({ c }: { c: ProviderOrgSnapshot }) {
+function ClientCard({ c, wazuh }: { c: ProviderOrgSnapshot; wazuh: string | null }) {
   return (
     <details open={c.health === "attention"} className="group rounded-lg border border-line bg-panel">
       <summary className="flex cursor-pointer list-none flex-wrap items-center gap-x-6 gap-y-2 px-5 py-4 [&::-webkit-details-marker]:hidden">
@@ -109,7 +111,14 @@ function ClientCard({ c }: { c: ProviderOrgSnapshot }) {
         </div>
         <div className="flex flex-wrap items-center justify-between gap-3 md:col-span-2">
           <DataSourceBadge source={c.data_source} />
-          <OpenWorkspace orgId={c.org.id} orgName={c.org.name} />
+          <div className="flex flex-wrap items-center gap-3">
+            {wazuh && (
+              <a href={wazuh} target="_blank" rel="noreferrer" className="rounded-md px-3 py-1.5 text-sm font-medium ring-1 ring-line hover:bg-canvas">
+                Open in Wazuh
+              </a>
+            )}
+            <OpenWorkspace orgId={c.org.id} orgName={c.org.name} />
+          </div>
         </div>
       </div>
     </details>
