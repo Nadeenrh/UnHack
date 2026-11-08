@@ -96,78 +96,97 @@ export function RegisterForm() {
   }
 
   return (
-    <form onSubmit={onSubmit} className="space-y-4">
-      <h1 className="text-xl font-semibold">Set up your organization</h1>
-      <FormError message={error} />
-      <Field label="Organization name" name="org_name" required minLength={2} maxLength={150} placeholder="Maple Street Family Clinic" />
-      <label className="block">
-        <span className="text-sm font-medium">Type of organization</span>
-        <select name="sector" required defaultValue="" className="mt-1 block w-full rounded-md border border-line bg-panel px-3 py-2">
-          <option value="" disabled>
-            Choose one
-          </option>
-          {Object.entries(SECTOR_LABEL).map(([value, label]) => (
-            <option key={value} value={value}>
-              {label}
-            </option>
-          ))}
-        </select>
-      </label>
-      <Field label="Phone number" name="phone" type="tel" autoComplete="tel" maxLength={32} placeholder="123-456-7890" hint="So your Nightwatch team can reach you." />
-      <div className="grid grid-cols-2 gap-3">
-        <Field label="First name" name="first_name" autoComplete="given-name" required />
-        <Field label="Last name" name="last_name" autoComplete="family-name" required />
+    <form onSubmit={onSubmit} data-wide className="space-y-5">
+      <div>
+        <h1 className="text-xl font-semibold">Set up your organization</h1>
+        <p className="mt-1 text-sm text-muted">Takes about a minute. Your Nightwatch team handles the technical setup.</p>
       </div>
-      <Field label="Work email" name="email" type="email" autoComplete="email" required />
-      <Field label="Password" name="password" type="password" autoComplete="new-password" required minLength={12} hint="At least 12 characters." />
+      <FormError message={error} />
 
-      <fieldset className="space-y-2">
-        <legend className="text-sm font-medium">Choose a plan</legend>
-        <p className="text-sm text-muted">Start free for 30 days. No card needed now, and you can change plan later.</p>
-        <div className="space-y-2">
-          {PLANS.map((p) => {
-            const active = plan === p.id;
-            return (
-              <label
-                key={p.id}
-                className={`flex cursor-pointer items-start gap-3 rounded-md border px-4 py-3 ${
-                  active ? "border-lantern bg-lantern-soft" : "border-line hover:bg-canvas"
-                }`}
-              >
-                <input
-                  type="radio"
-                  name="plan"
-                  value={p.id}
-                  checked={active}
-                  onChange={() => setPlan(p.id)}
-                  className="mt-1 accent-lantern"
-                />
-                <span className="flex-1">
-                  <span className="flex items-baseline justify-between gap-2">
-                    <span className="font-semibold">{p.name}</span>
-                    <span className="text-sm">
-                      <span className="font-semibold">{p.price}</span> <span className="text-muted">{p.cadence}</span>
+      <div className="grid gap-8 lg:grid-cols-2">
+        <div className="space-y-6">
+          <section className="space-y-3">
+            <h2 className="text-xs font-semibold tracking-wider text-muted uppercase">Your business</h2>
+            <Field label="Business name" name="org_name" required minLength={2} maxLength={150} placeholder="Maple Street Family Clinic" />
+            <div className="grid gap-3 sm:grid-cols-2">
+              <label className="block">
+                <span className="text-sm font-medium">Type</span>
+                <select name="sector" required defaultValue="" className="mt-1 block w-full rounded-md border border-line bg-panel px-3 py-2">
+                  <option value="" disabled>
+                    Choose one
+                  </option>
+                  {Object.entries(SECTOR_LABEL).map(([value, label]) => (
+                    <option key={value} value={value}>
+                      {label}
+                    </option>
+                  ))}
+                </select>
+              </label>
+              <Field label="Business phone" name="phone" type="tel" autoComplete="tel" maxLength={32} placeholder="123-456-7890" />
+            </div>
+          </section>
+
+          <section className="space-y-3">
+            <h2 className="text-xs font-semibold tracking-wider text-muted uppercase">Your account</h2>
+            <div className="grid grid-cols-2 gap-3">
+              <Field label="First name" name="first_name" autoComplete="given-name" required />
+              <Field label="Last name" name="last_name" autoComplete="family-name" required />
+            </div>
+            <Field label="Work email" name="email" type="email" autoComplete="email" required />
+            <Field label="Password" name="password" type="password" autoComplete="new-password" required minLength={12} hint="At least 12 characters." />
+          </section>
+        </div>
+
+        <section className="flex flex-col gap-3 lg:border-l lg:border-line lg:pl-8">
+          <h2 className="text-xs font-semibold tracking-wider text-muted uppercase">Choose a plan</h2>
+          <p className="text-sm text-muted">Start free for 30 days. No card needed, and you can change plan any time.</p>
+          <div className="space-y-2">
+            {PLANS.map((p) => {
+              const active = plan === p.id;
+              return (
+                <label
+                  key={p.id}
+                  className={`flex cursor-pointer items-start gap-3 rounded-md border px-4 py-3 ${
+                    active ? "border-lantern bg-lantern-soft" : "border-line hover:bg-canvas"
+                  }`}
+                >
+                  <input
+                    type="radio"
+                    name="plan"
+                    value={p.id}
+                    checked={active}
+                    onChange={() => setPlan(p.id)}
+                    className="mt-1 accent-lantern"
+                  />
+                  <span className="flex-1">
+                    <span className="flex items-baseline justify-between gap-2">
+                      <span className="font-semibold">{p.name}</span>
+                      <span className="text-sm">
+                        <span className="font-semibold">{p.price}</span> <span className="text-muted">{p.cadence}</span>
+                      </span>
+                    </span>
+                    <span className="mt-0.5 block text-sm text-muted">
+                      {p.machines} · {p.blurb}
                     </span>
                   </span>
-                  <span className="mt-0.5 block text-sm text-muted">
-                    {p.machines} · {p.blurb}
-                  </span>
-                </span>
-              </label>
-            );
-          })}
-        </div>
-      </fieldset>
+                </label>
+              );
+            })}
+          </div>
 
-      <PrimaryButton type="submit" disabled={busy}>
-        {busy ? "Setting up…" : "Create organization"}
-      </PrimaryButton>
-      <p className="text-center text-sm text-muted">
-        Already using Nightwatch?{" "}
-        <Link href="/login" className="font-medium text-info underline-offset-4 hover:underline">
-          Sign in
-        </Link>
-      </p>
+          <div className="mt-auto space-y-3 pt-2">
+            <PrimaryButton type="submit" disabled={busy}>
+              {busy ? "Setting up…" : "Create organization"}
+            </PrimaryButton>
+            <p className="text-center text-sm text-muted">
+              Already using Nightwatch?{" "}
+              <Link href="/login" className="font-medium text-info underline-offset-4 hover:underline">
+                Sign in
+              </Link>
+            </p>
+          </div>
+        </section>
+      </div>
     </form>
   );
 }

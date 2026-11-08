@@ -8,7 +8,10 @@ export default function AuthLayout({ children }: { children: React.ReactNode }) 
         <Logo size={34} />
         <span className="text-2xl font-semibold tracking-tight">Nightwatch</span>
       </Link>
-      <div className="w-full max-w-md rounded-lg bg-panel p-6 text-ink ring-1 ring-line shadow-xl sm:p-8">{children}</div>
+      {/* Narrow by default; a page can ask for a wide card by putting data-wide on its content (sign-up does). */}
+      <div className="w-full max-w-md rounded-lg bg-panel p-6 text-ink ring-1 ring-line shadow-xl has-[[data-wide]]:max-w-4xl sm:p-8">
+        {children}
+      </div>
     </div>
   );
 }
