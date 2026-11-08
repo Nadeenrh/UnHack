@@ -9,7 +9,7 @@ export interface SupportContact {
 export function supportContact(): SupportContact {
   return {
     email: process.env.NIGHTWATCH_SUPPORT_EMAIL?.trim() || "team@nightwatch.example",
-    phone: process.env.NIGHTWATCH_SUPPORT_PHONE?.trim() || "+1 (000) 000-0000",
+    phone: process.env.NIGHTWATCH_SUPPORT_PHONE?.trim() || "123-456-7890",
     hours: process.env.NIGHTWATCH_SUPPORT_HOURS?.trim() || "Monitored 24/7",
   };
 }
