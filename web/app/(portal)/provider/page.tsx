@@ -30,7 +30,7 @@ export default async function ProviderOverview() {
       <div className="grid grid-cols-2 gap-3 lg:grid-cols-4 lg:gap-4">
         <StatTile tone={attention ? "lantern" : "quiet"} value={attention} label="Clients needing attention" />
         <StatTile tone="info" value={open} label="Open incidents, all clients" />
-        <StatTile tone={pending ? "lantern" : "quiet"} value={pending} label="Waiting on a client decision" />
+        <StatTile tone={pending ? "high" : "quiet"} value={pending} label="Waiting on a client decision" />
         <StatTile tone="ok" value={`${online}/${total}`} label="Machines reporting in" />
       </div>
 
@@ -109,7 +109,7 @@ function ClientCard({ c, wazuh }: { c: ProviderOrgSnapshot; wazuh: string | null
             ))}
           </ul>
         </div>
-        <div className="flex flex-wrap items-center justify-between gap-3 md:col-span-2">
+        <div className="flex flex-wrap items-center justify-between gap-3 border-t border-line pt-4 md:col-span-2">
           <DataSourceBadge source={c.data_source} />
           <div className="flex flex-wrap items-center gap-3">
             {wazuh && (

@@ -33,8 +33,16 @@ export function ActivityChart({ buckets }: { buckets: HourBucket[] }) {
       </figcaption>
 
       <div className="relative">
-        <span className="absolute -top-1 left-0 text-[10px] text-muted tabular-nums">{max}</span>
-        <div aria-hidden className="flex h-36 items-end gap-[3px] border-b border-line pl-6 sm:h-44">
+        {/* Faint gridlines at quarter steps, labelled at half and full height. */}
+        <div aria-hidden className="pointer-events-none absolute inset-x-0 top-0 h-36 sm:h-44">
+          {[1, 0.75, 0.5, 0.25].map((f) => (
+            <div key={f} className="absolute inset-x-0 flex translate-y-1/2 items-center" style={{ bottom: `${f * 100}%` }}>
+              <span className="w-6 pr-1.5 text-right text-[10px] text-muted tabular-nums">{f === 1 || f === 0.5 ? Math.round(max * f) : ""}</span>
+              <span className="flex-1 border-t border-dashed border-line" />
+            </div>
+          ))}
+        </div>
+        <div aria-hidden className="relative flex h-36 items-end gap-[3px] border-b border-line pl-6 sm:h-44">
           {buckets.map((b) => {
             const n = b.flagged + b.routine;
             return (
@@ -60,24 +68,28 @@ export function ActivityChart({ buckets }: { buckets: HourBucket[] }) {
         </div>
       </div>
 
-      <table className="sr-only" aria-label="Alerts per hour, last 24 hours">
-        <thead>
-          <tr>
-            <th>Hour</th>
-            <th>Routine</th>
-            <th>Part of an incident</th>
-          </tr>
-        </thead>
-        <tbody>
-          {buckets.map((b) => (
-            <tr key={b.hour}>
-              <td>{hourLabel(b.hour)}</td>
-              <td>{b.routine}</td>
-              <td>{b.flagged}</td>
+      {/* Screen-reader copy of the chart. The wrapper does the hiding: tables ignore overflow, so a
+          hidden table on its own still stretches the page. */}
+      <div className="sr-only">
+        <table aria-label="Alerts per hour, last 24 hours">
+          <thead>
+            <tr>
+              <th>Hour</th>
+              <th>Routine</th>
+              <th>Part of an incident</th>
             </tr>
-          ))}
-        </tbody>
-      </table>
+          </thead>
+          <tbody>
+            {buckets.map((b) => (
+              <tr key={b.hour}>
+                <td>{hourLabel(b.hour)}</td>
+                <td>{b.routine}</td>
+                <td>{b.flagged}</td>
+              </tr>
+            ))}
+          </tbody>
+        </table>
+      </div>
     </figure>
   );
 }

@@ -64,16 +64,34 @@ export default async function ActivityPage({ params }: { params: Promise<{ orgId
   const nameOf = new Map(people.map((p) => [p.user_id, p.name]));
   const refOf = new Map(incidents.map((i) => [i.incident_id, i.ref]));
 
+  // Collapse back-to-back entries of the same kind on the same incident into one row
+  // (three "AI investigation step finished" rows become "AI agents investigated").
+  const whoOf = (e: (typeof events)[number]) =>
+    (e.actor_id && nameOf.get(e.actor_id)) ?? (e.actor_type === "agent" && e.actor_id ? (AGENT_LABEL[e.actor_id] ?? `AI ${e.actor_id}`) : ACTOR[e.actor_type]);
+  const groups: { e: (typeof events)[number]; actors: string[]; count: number }[] = [];
+  for (const e of events) {
+    const last = groups.at(-1);
+    if (last && e.incident_id && last.e.incident_id === e.incident_id && last.e.event === e.event) {
+      last.count++;
+      const who = whoOf(e);
+      if (!last.actors.includes(who)) last.actors.push(who);
+      continue;
+    }
+    groups.push({ e, actors: [whoOf(e)], count: 1 });
+  }
+
   return (
     <>
       <PageHeader title="Activity log" subtitle="What the AI agents saw and did on your network, and every decision since. Entries can't be edited or deleted." />
       <AiSummary orgId={orgId} s={summary} />
       <Panel title="Full log">
-        {events.length ? (
+        {groups.length ? (
           <ol>
-            {events.map((e, idx) => {
-              const who =
-                (e.actor_id && nameOf.get(e.actor_id)) ?? (e.actor_type === "agent" && e.actor_id ? (AGENT_LABEL[e.actor_id] ?? `AI ${e.actor_id}`) : ACTOR[e.actor_type]);
+            {groups.map(({ e, actors, count }, idx) => {
+              const label =
+                e.event === "agent_run_completed" && count > 1
+                  ? "AI agents investigated"
+                  : `${EVENT[e.event] ?? e.event}${count > 1 ? ` (${count})` : ""}`;
               const detail =
                 e.event === "support_session_started" && typeof e.details?.reason === "string"
                   ? `Reason: ${e.details.reason}`
@@ -90,11 +108,11 @@ export default async function ActivityPage({ params }: { params: Promise<{ orgId
                     {formatDateTime(e.created_at)}
                   </time>
                   <div>
-                    <p className={e.actor_type === "provider_support" ? "font-semibold" : undefined}>{EVENT[e.event] ?? e.event}</p>
+                    <p className={e.actor_type === "provider_support" ? "font-semibold" : undefined}>{label}</p>
                     {detail && <p className="text-sm text-muted">{detail}</p>}
                   </div>
                   <div className="text-sm sm:text-right">
-                    <span className="text-muted">{who}</span>
+                    <span className="text-muted">{actors.join(", ")}</span>
                     {e.incident_id && refOf.get(e.incident_id) && (
                       <Link href={`/app/${orgId}/incidents/${e.incident_id}`} className="ml-2 font-medium text-info hover:underline">
                         {refOf.get(e.incident_id)}

@@ -37,26 +37,29 @@ function StatusBlock() {
 export function Shell({ nav, user, orgs, currentOrgId, providerLink, banner, children }: ShellProps) {
   return (
     <div className="min-h-screen lg:grid lg:grid-cols-[15rem_1fr]">
-      <aside className="hidden border-r border-line bg-sidebar text-ink lg:sticky lg:top-0 lg:flex lg:h-screen lg:flex-col">
-        <Link href="/" className="flex items-center gap-2.5 px-5 py-5">
-          <Logo />
-          <span className="text-lg font-semibold tracking-tight">Nightwatch</span>
-        </Link>
-        <StatusBlock />
-        <SidebarNav items={nav} />
-        <div className="mt-auto border-t border-white/10 px-5 py-4 text-sm">
-          <div className="truncate font-medium">{user.name}</div>
-          <div className="truncate text-white/60">{user.email}</div>
-          <div className="mt-3 flex gap-4">
-            {providerLink && (
-              <Link href="/provider" className="text-white/80 underline-offset-4 hover:underline">
-                Provider view
-              </Link>
-            )}
-            <SignOutButton className="text-white/80 underline-offset-4 hover:underline" />
+      {/* The column carries the colour so it reaches the bottom of long pages; the sidebar inside stays put while you scroll. */}
+      <div className="hidden border-r border-line bg-sidebar lg:block">
+        <aside className="text-ink lg:sticky lg:top-0 lg:flex lg:h-screen lg:flex-col">
+          <Link href="/" className="flex items-center gap-2.5 px-5 py-5">
+            <Logo />
+            <span className="text-lg font-semibold tracking-tight">Nightwatch</span>
+          </Link>
+          <StatusBlock />
+          <SidebarNav items={nav} />
+          <div className="mt-auto border-t border-white/10 px-5 py-4 text-sm">
+            <div className="truncate font-medium">{user.name}</div>
+            <div className="truncate text-white/60">{user.email}</div>
+            <div className="mt-3 flex gap-4">
+              {providerLink && (
+                <Link href="/provider" className="text-white/80 underline-offset-4 hover:underline">
+                  Provider view
+                </Link>
+              )}
+              <SignOutButton className="text-white/80 underline-offset-4 hover:underline" />
+            </div>
           </div>
-        </div>
-      </aside>
+        </aside>
+      </div>
 
       <div className="min-w-0">
         <header className="sticky top-0 z-20 flex items-center gap-3 border-b border-line bg-sidebar px-4 py-2.5 lg:px-8">

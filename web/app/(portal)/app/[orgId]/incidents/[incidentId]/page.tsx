@@ -185,7 +185,8 @@ export default async function IncidentPage({ params }: { params: Promise<{ orgId
                       </span>
                     </div>
                     {r.output_summary && <p className="mt-0.5 text-muted">{r.output_summary}</p>}
-                    <p className="mt-0.5 text-xs text-muted">{r.model ?? "Rule-based, no AI model"}</p>
+                    {/* Demo data carries a placeholder model name; only show real ones. */}
+                    {!r.model?.includes("fixture") && <p className="mt-0.5 text-xs text-muted">{r.model ?? "Rule-based, no AI model"}</p>}
                   </li>
                 ))}
               </ul>
