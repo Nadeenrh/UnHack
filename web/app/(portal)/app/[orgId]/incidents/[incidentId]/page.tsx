@@ -21,6 +21,14 @@ const SOURCE_LABEL: Record<string, string> = {
   agent: "Nightwatch analysis",
 };
 
+/** "under a second", "4.2 seconds", "3 minutes". */
+function formatCaught(ms: number): string {
+  if (ms < 1000) return "under a second";
+  if (ms < 60_000) return `${(ms / 1000).toFixed(1)} seconds`;
+  const min = Math.round(ms / 60_000);
+  return `${min} minute${min === 1 ? "" : "s"}`;
+}
+
 export default async function IncidentPage({ params }: { params: Promise<{ orgId: string; incidentId: string }> }) {
   const { orgId, incidentId } = await params;
   const { session, access } = await requirePageOrg(orgId);
@@ -43,6 +51,12 @@ export default async function IncidentPage({ params }: { params: Promise<{ orgId
     }
   }
 
+  // How fast Nightwatch caught it: from the alert firing on the machine (detected_at) to this
+  // incident opening (created_at). Fixture data is loaded in bulk, so only live and replayed
+  // incidents get a number, and only when the clocks agree (0 to 10 minutes).
+  const caughtMs = Date.parse(incident.created_at) - Date.parse(incident.detected_at);
+  const caught = incident.data_source !== "fixture" && caughtMs >= 0 && caughtMs <= 600_000 ? formatCaught(caughtMs) : null;
+
   const approver = canApprove(access);
   const readOnlyReason =
     access.via === "support" ? "You're viewing in support mode. Only the client can approve or deny." : "Only approvers and owners can decide this.";
@@ -64,6 +78,14 @@ export default async function IncidentPage({ params }: { params: Promise<{ orgId
         <p className="mt-1 text-sm text-muted">
           Verdict: {incident.verdict}, {Math.round(incident.confidence * 100)}% confidence. Detected {formatDateTime(incident.detected_at)}
         </p>
+        {caught && (
+          <p className="mt-3 inline-flex items-center gap-1.5 rounded-md bg-ok-soft px-2.5 py-1 text-sm font-medium text-ok">
+            <svg aria-hidden viewBox="0 0 24 24" className="size-4" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+              <path d="M13 3 5 14h6l-1 7 8-11h-6l1-7z" />
+            </svg>
+            Caught {caught} after the alert fired
+          </p>
+        )}
       </header>
 
       <div className="grid gap-6 lg:grid-cols-[minmax(0,1fr)_20rem]">
@@ -81,18 +103,24 @@ export default async function IncidentPage({ params }: { params: Promise<{ orgId
           </Panel>
 
           <Panel title="Response" tone={incident.actions.some((a) => a.status === "awaiting_approval") ? "lantern" : "default"}>
-            <ActionPanel orgId={orgId} actions={incident.actions} canApprove={approver} readOnlyReason={readOnlyReason} />
+            <ActionPanel
+              orgId={orgId}
+              actions={incident.actions}
+              incidentStatus={incident.status}
+              canApprove={approver}
+              readOnlyReason={readOnlyReason}
+            />
           </Panel>
 
           <Panel title="Evidence">
             {incident.evidence.length ? (
               <ol>
                 {incident.evidence.map((e) => (
-                  <li key={e.id} className="grid gap-1 border-b border-line px-5 py-3 last:border-0 sm:grid-cols-[6.5rem_1fr]">
+                  <li key={e.id} className="grid gap-1 border-b border-line px-5 py-3 last:border-0 sm:grid-cols-[6.5rem_minmax(0,1fr)]">
                     <time dateTime={e.observed_at} className="text-sm text-muted tabular-nums">
                       {formatTime(e.observed_at)}
                     </time>
-                    <div>
+                    <div className="min-w-0">
                       <p>{e.claim}</p>
                       <p className="mt-0.5 text-xs text-muted">
                         {SOURCE_LABEL[e.source] ?? e.source}
@@ -112,15 +140,15 @@ export default async function IncidentPage({ params }: { params: Promise<{ orgId
           </Panel>
         </div>
 
-        <aside className="space-y-6">
+        <aside className="min-w-0 space-y-6">
           <Panel title="Machines involved">
             <ul>
               {incident.assets.map((a) => (
                 <li key={a.id} className="border-b border-line px-5 py-3 last:border-0">
                   <div className="flex items-baseline justify-between gap-2">
-                    <span className="font-mono text-sm font-medium">{a.hostname}</span>
+                    <span className="min-w-0 font-mono text-sm font-medium">{a.hostname}</span>
                     {wazuhLinks.has(a.id) && (
-                      <a href={wazuhLinks.get(a.id)} target="_blank" rel="noreferrer" className="text-xs font-medium text-info hover:underline">
+                      <a href={wazuhLinks.get(a.id)} target="_blank" rel="noreferrer" className="shrink-0 text-xs font-medium whitespace-nowrap text-info hover:underline">
                         Wazuh events
                       </a>
                     )}

@@ -28,7 +28,7 @@ export default async function Home() {
           For small and medium businesses without a security team. Nightwatch investigates every alert, explains it in plain language,
           and asks before it changes anything.
         </p>
-        <ul className="mt-8 grid max-w-3xl gap-6 text-sm text-white/80 sm:grid-cols-3">
+        <ul className="mt-8 grid max-w-3xl gap-6 text-sm text-white/80 sm:grid-cols-2">
           {PROMISES.map((p) => (
             <li key={p.title} className="space-y-2">
               <PromiseIcon name={p.icon} />

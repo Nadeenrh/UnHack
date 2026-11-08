@@ -53,6 +53,15 @@ body {
 
 body {
   font-family: var(--font-sans);
+  /* Long unbroken strings (file hashes, URLs, record IDs from the AI) wrap inside their box
+     instead of spilling out. "anywhere" also lets flex and grid columns shrink around them. */
+  overflow-wrap: anywhere;
+}
+
+/* Tables scroll sideways (their wrappers use overflow-x-auto), so keep words whole there
+   rather than squeezing columns down to a letter wide. */
+table {
+  overflow-wrap: break-word;
 }
 
 /* Visible keyboard focus everywhere. */

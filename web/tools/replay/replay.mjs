@@ -5,8 +5,8 @@
 //
 //   node tools/replay/replay.mjs <alerts.json|alerts.jsonl> --url http://localhost:3000 --key <ingest key> [--fresh] [--gap 1500]
 //
-//   --fresh     give alerts new ids and move their timestamps to "now", so the same file can be
-//               replayed repeatedly (otherwise duplicates are ignored by design)
+//   --fresh     give alerts new ids and stamp each one with the time it is sent, so the same file
+//               can be replayed repeatedly (otherwise duplicates are ignored by design)
 //   --gap ms    wait between alerts so the dashboard visibly updates (default 0)
 //
 // Alerts arrive marked as replay (X-Nightwatch-Replay: 1) and the UI labels them that way.
@@ -34,17 +34,14 @@ const text = readFileSync(file, "utf8").trim();
 let alerts = text.startsWith("[") ? JSON.parse(text) : text.split(/\r?\n/).filter(Boolean).map((l) => JSON.parse(l));
 
 if (fresh) {
-  const times = alerts.map((a) => Date.parse(String(a.timestamp).replace(/([+-]\d{2})(\d{2})$/, "$1:$2")));
-  const first = Math.min(...times.filter(Number.isFinite));
   const run = Date.now().toString(36);
-  alerts = alerts.map((a, i) => ({
-    ...a,
-    id: `${a.id ?? "alert"}-${run}`,
-    timestamp: new Date(Date.now() + (Number.isFinite(times[i]) ? times[i] - first : 0)).toISOString(),
-  }));
+  alerts = alerts.map((a) => ({ ...a, id: `${a.id ?? "alert"}-${run}` }));
 }
 
 for (const [i, alert] of alerts.entries()) {
+  // --fresh stamps each alert at the moment it is sent, like a live Wazuh feed, so the timeline
+  // matches what the audience watches and "caught in N seconds" on the incident page is real.
+  if (fresh) alert.timestamp = new Date().toISOString();
   const res = await fetch(new URL("/api/v1/ingest/wazuh", url), {
     method: "POST",
     headers: { "content-type": "application/json", authorization: `Bearer ${key}`, "x-nightwatch-replay": "1" },

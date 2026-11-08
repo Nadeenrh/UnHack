@@ -1,4 +1,5 @@
 import Link from "next/link";
+import { Fragment } from "react";
 import type { Incident } from "@/contracts/types";
 import { formatDateTime } from "@/components/format";
 import { DataSourceBadge, IncidentStatusBadge, SeverityBadge } from "@/components/ui/Badges";
@@ -34,7 +35,17 @@ export function IncidentTable({ incidents, orgId }: { incidents: Incident[]; org
               <td className="px-3 py-3">
                 <IncidentStatusBadge status={i.status} />
               </td>
-              <td className="hidden px-3 py-3 font-mono text-xs md:table-cell">{i.assets.map((a) => a.hostname).join(", ")}</td>
+              <td className="hidden px-3 py-3 font-mono text-xs md:table-cell">
+                {/* Each machine name stays on one line (no split at the hyphen in RECEPTION-PC); the list can still wrap between names. */}
+                {i.assets.map((a, n) => (
+                  <Fragment key={a.id}>
+                    <span className="whitespace-nowrap">
+                      {a.hostname}
+                      {n < i.assets.length - 1 ? "," : ""}
+                    </span>{" "}
+                  </Fragment>
+                ))}
+              </td>
               <td className="px-5 py-3 text-right whitespace-nowrap text-muted">{formatDateTime(i.detected_at)}</td>
             </tr>
           ))}

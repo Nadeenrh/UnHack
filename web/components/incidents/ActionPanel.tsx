@@ -2,7 +2,7 @@
 
 import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
-import type { Action } from "@/contracts/types";
+import type { Action, IncidentStatus } from "@/contracts/types";
 import { ACTION_LABEL, ACTION_VERB, formatDateTime } from "@/components/format";
 import { ActionStatusBadge } from "@/components/ui/Badges";
 
@@ -20,11 +20,13 @@ const RISK_TEXT: Record<Action["risk"], string> = {
 export function ActionPanel({
   orgId,
   actions,
+  incidentStatus,
   canApprove,
   readOnlyReason,
 }: {
   orgId: string;
   actions: Action[];
+  incidentStatus?: IncidentStatus;
   canApprove: boolean;
   readOnlyReason?: string;
 }) {
@@ -41,7 +43,27 @@ export function ActionPanel({
   const rest = actions.filter((a) => a.status !== "awaiting_approval");
 
   if (!actions.length) {
-    return <p className="px-5 py-6 text-sm text-muted">No responses proposed for this incident.</p>;
+    // Open incidents are still being worked on, so say that rather than "nothing proposed".
+    if (incidentStatus === "open" || incidentStatus === "investigating") {
+      return (
+        <div className="flex items-start gap-3 px-5 py-6 text-sm">
+          <span aria-hidden className="relative mt-1.5 flex size-2.5 shrink-0">
+            <span className="absolute inline-flex size-full animate-ping rounded-full bg-info opacity-60" />
+            <span className="relative inline-flex size-2.5 rounded-full bg-info" />
+          </span>
+          <div>
+            <p className="font-medium">Still investigating</p>
+            <p className="mt-0.5 text-muted">
+              Any recommended response will show up here as soon as the investigation finishes. Nothing runs without your approval.
+            </p>
+          </div>
+        </div>
+      );
+    }
+    const closed = incidentStatus === "resolved" || incidentStatus === "false_positive";
+    return (
+      <p className="px-5 py-6 text-sm text-muted">{closed ? "No response was needed for this incident." : "No responses proposed for this incident."}</p>
+    );
   }
 
   return (
