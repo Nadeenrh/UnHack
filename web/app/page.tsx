@@ -1,4 +1,5 @@
 import Link from "next/link";
+import { PromiseIcon, PROMISES } from "@/components/marketing/promises";
 import { redirect } from "next/navigation";
 import { Logo } from "@/components/shell/Logo";
 import { isProvider } from "@/lib/nightwatch/access";
@@ -24,22 +25,17 @@ export default async function Home() {
           Someone is always watching your network, even at 2 a.m.
         </h1>
         <p className="mt-5 max-w-xl text-lg text-white/75">
-          For small businesses and clinics without a security team. Nightwatch investigates every alert, explains it in plain language,
+          For small and medium businesses without a security team. Nightwatch investigates every alert, explains it in plain language,
           and asks before it changes anything.
         </p>
-        <ul className="mt-8 grid max-w-2xl gap-4 text-sm text-white/80 sm:grid-cols-3">
-          <li>
-            <span className="block font-semibold text-white">Catches it early</span>
-            Password guessing, phishing links and ransomware-like file changes, flagged before they become a breach.
-          </li>
-          <li>
-            <span className="block font-semibold text-white">Explains it plainly</span>
-            AI analysts read the logs and tell you what happened and what to do, in a sentence or two.
-          </li>
-          <li>
-            <span className="block font-semibold text-white">You stay in charge</span>
-            Nothing on your network changes without your approval, unless you choose to allow it.
-          </li>
+        <ul className="mt-8 grid max-w-3xl gap-6 text-sm text-white/80 sm:grid-cols-3">
+          {PROMISES.map((p) => (
+            <li key={p.title} className="space-y-2">
+              <PromiseIcon name={p.icon} />
+              <span className="block font-semibold text-white">{p.title}</span>
+              <span className="block">{p.body}</span>
+            </li>
+          ))}
         </ul>
         <div className="mt-10 flex flex-wrap gap-3">
           <Link href="/login" className="rounded-md bg-lantern px-5 py-2.5 font-semibold text-night hover:brightness-105">

@@ -3,15 +3,9 @@
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useState } from "react";
+import { PromiseIcon, PROMISES, TAGLINE } from "@/components/marketing/promises";
 import { Logo } from "@/components/shell/Logo";
 import { Field, FormError, PrimaryButton, safeNext } from "./Field";
-
-// Same three points as the homepage, so the wording matches everywhere.
-const POINTS: [string, string][] = [
-  ["Catches it early", "Password guessing, phishing links and ransomware-like file changes, flagged before they become a breach."],
-  ["Explains it plainly", "AI analysts read the logs and tell you what happened and what to do, in a sentence or two."],
-  ["You stay in charge", "Nothing on your network changes without your approval, unless you choose to allow it."],
-];
 
 export function LoginForm({ next }: { next?: string }) {
   const router = useRouter();
@@ -51,14 +45,17 @@ export function LoginForm({ next }: { next?: string }) {
           <Logo size={40} />
           <span className="text-2xl font-semibold tracking-tight">Nightwatch</span>
         </div>
-        <p className="text-sm text-muted">Security monitoring for small and medium businesses, run by AI analysts and your Nightwatch team.</p>
-        <ul className="space-y-4 text-sm">
-          {POINTS.map(([title, body]) => (
-            <li key={title} className="flex gap-3">
-              <span aria-hidden className="mt-1.5 size-2 shrink-0 rounded-full bg-lantern" />
+        <div>
+          <p className="text-lg font-semibold">{TAGLINE}</p>
+          <p className="mt-1 text-sm text-muted">AI analysts watch your network day and night, and your Nightwatch team is a call away.</p>
+        </div>
+        <ul className="space-y-5">
+          {PROMISES.map((p) => (
+            <li key={p.title} className="flex gap-3">
+              <PromiseIcon name={p.icon} />
               <span>
-                <span className="block font-semibold">{title}</span>
-                <span className="text-muted">{body}</span>
+                <span className="block font-semibold">{p.title}</span>
+                <span className="text-sm text-muted">{p.body}</span>
               </span>
             </li>
           ))}
