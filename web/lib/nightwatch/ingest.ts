@@ -40,6 +40,7 @@ export interface NormalizedAlert {
   level: number;
   description: string;
   mitre: { id: string; name: string }[];
+  groups: string[];
   agentRef: string | null;
   hostname: string | null;
   agentIp: string | null;
@@ -87,6 +88,7 @@ export function normalizeWazuhAlert(raw: unknown): NormalizedAlert | null {
     level: Math.max(0, Math.min(16, Math.trunc(level))),
     description: clip(rule.description, 500) ?? "Wazuh alert",
     mitre,
+    groups,
     agentRef: clip(agent.id != null ? String(agent.id) : null, 64),
     hostname: clip(agent.name, 255),
     agentIp: clip(agent.ip, 45),
@@ -94,6 +96,11 @@ export function normalizeWazuhAlert(raw: unknown): NormalizedAlert | null {
     evidenceSource,
     raw: a,
   };
+}
+
+/** Configuration-checklist results (Wazuh SCA): useful context, never an incident on their own. */
+export function isPostureFinding(alert: Pick<NormalizedAlert, "groups">): boolean {
+  return alert.groups.includes("sca");
 }
 
 export interface IngestResult {
@@ -197,6 +204,10 @@ async function storeAlert(
   const alertRowId = ins.insertId;
 
   if (alert.level < minIncidentLevel() || !assetId) return null; // kept as context only
+  // Wazuh's configuration checklist (SCA, e.g. "CIS: Ensure AppArmor is installed") rates failed
+  // checks at level 7, but they are setup hygiene, not attacks. Every new machine produces dozens,
+  // and they would swallow real attacks on the same machine into one incident. Keep them as context.
+  if (isPostureFinding(alert)) return null;
 
   const severity = severityForLevel(alert.level);
   const logRef = `wazuh:${alert.sourceAlertId}`;

@@ -90,6 +90,19 @@ describe.skipIf(!enabled)("ingest → investigate → policy", () => {
     expect(data).toMatchObject({ stored: 0, duplicates: 4, incidents: [] });
   });
 
+  it("configuration-checklist findings (Wazuh SCA) are stored as context and never open an incident", async () => {
+    const sca = {
+      id: "sca-check-0001",
+      timestamp: "2026-11-08T06:55:20.000+0000",
+      rule: { id: "19007", level: 7, description: "CIS Ubuntu Linux 24.04: Ensure AppArmor is installed.", groups: ["sca"] },
+      agent: { id: "009", name: "AUDIT-BOX", ip: "192.168.8.90" },
+    };
+    const data = (await body(await ingest([sca], MC_KEY))).data;
+    expect(data).toMatchObject({ stored: 1, incidents: [] });
+    const row = await one<{ incident_id: string | null }>(`SELECT incident_id FROM alerts WHERE org_id = ? AND source_alert_id = 'sca-check-0001'`, [mc]);
+    expect(row).toEqual({ incident_id: null });
+  });
+
   it("the key decides the org: the same alerts sent with another client's key stay in that client", async () => {
     const data = (await body(await ingest(SAMPLE, ND_KEY))).data;
     expect(data.stored).toBe(4);
