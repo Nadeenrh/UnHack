@@ -12,9 +12,9 @@ export interface PolicyRow {
 }
 
 const MODES: { value: PolicyRow["mode"]; label: string; help: string }[] = [
-  { value: "auto", label: "Automatic", help: "Nightwatch does it right away and tells you." },
-  { value: "ask", label: "Ask me", help: "Nightwatch waits for an approver." },
-  { value: "never", label: "I'll do it", help: "Nightwatch only recommends it." },
+  { value: "auto", label: "Automatic", help: "NightWatch does it right away and tells you." },
+  { value: "ask", label: "Ask me", help: "NightWatch waits for an approver." },
+  { value: "never", label: "I'll do it", help: "NightWatch only recommends it." },
 ];
 
 const RISK: Record<PolicyRow["risk"], string> = { low: "Low risk", high: "High risk", critical: "Critical" };

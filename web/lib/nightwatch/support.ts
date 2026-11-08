@@ -1,4 +1,4 @@
-// How a client reaches the Nightwatch team. Shown to clients; set per deployment in the env.
+// How a client reaches the NightWatch team. Shown to clients; set per deployment in the env.
 // Demo defaults are placeholders so the page looks complete before real details are set.
 export interface SupportContact {
   email: string;

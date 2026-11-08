@@ -248,7 +248,7 @@ async function storeAlert(
         orgId,
         ref,
         alert.description.slice(0, 200),
-        `New alert from ${alert.hostname}: ${alert.description} Nightwatch is investigating.`,
+        `New alert from ${alert.hostname}: ${alert.description} NightWatch is investigating.`,
         severity,
         replay ? "replay" : "live",
         alert.observedAt,

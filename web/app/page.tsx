@@ -19,13 +19,13 @@ export default async function Home() {
       <div className="mx-auto flex w-full max-w-3xl flex-1 flex-col justify-center px-6 py-16">
         <div className="flex items-center gap-3">
           <Logo size={44} />
-          <span className="text-3xl font-semibold tracking-tight">Nightwatch</span>
+          <span className="text-3xl font-semibold tracking-tight">NightWatch</span>
         </div>
         <h1 className="mt-10 max-w-2xl text-4xl leading-tight font-semibold tracking-tight sm:text-5xl">
           Someone is always watching your network, even at 2 a.m.
         </h1>
         <p className="mt-5 max-w-xl text-lg text-white/75">
-          For small and medium businesses without a security team. Nightwatch investigates every alert, explains it in plain language,
+          For small and medium businesses without a security team. NightWatch investigates every alert, explains it in plain language,
           and asks before it changes anything.
         </p>
         <ul className="mt-8 grid max-w-3xl gap-6 text-sm text-white/80 sm:grid-cols-2">

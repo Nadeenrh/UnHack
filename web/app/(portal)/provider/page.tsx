@@ -25,7 +25,7 @@ export default async function ProviderOverview() {
 
   return (
     <>
-      <PageHeader title="Clients" subtitle="Status of every organization Nightwatch protects. Clients needing attention are listed first." />
+      <PageHeader title="Clients" subtitle="Status of every organization NightWatch protects. Clients needing attention are listed first." />
 
       <div className="grid grid-cols-2 gap-3 lg:grid-cols-4 lg:gap-4">
         <StatTile tone={attention ? "lantern" : "quiet"} value={attention} label="Clients needing attention" />

@@ -49,7 +49,7 @@ export function RegisterForm() {
         ingestKey: body.data.first_site.ingest_key,
       });
     } catch {
-      setError("Couldn't reach Nightwatch. Check your connection and try again.");
+      setError("Couldn't reach NightWatch. Check your connection and try again.");
     } finally {
       setBusy(false);
     }
@@ -61,7 +61,7 @@ export function RegisterForm() {
       <div className="space-y-4">
         <h1 className="text-xl font-semibold">{created.orgName} is set up</h1>
         <p className="text-sm text-muted">
-          This is your site&apos;s ingest key. Your monitoring sends alerts to Nightwatch with it. Copy it somewhere safe now:
+          This is your site&apos;s ingest key. Your monitoring sends alerts to NightWatch with it. Copy it somewhere safe now:
           it won&apos;t be shown again. You can issue a new one later in Settings.
         </p>
         <div className="rounded-md border-2 border-lantern bg-lantern-soft p-3">
@@ -80,9 +80,9 @@ export function RegisterForm() {
         <div className="rounded-md bg-canvas px-4 py-3 text-sm">
           <p className="font-semibold">What happens next</p>
           <ol className="mt-2 list-decimal space-y-1 pl-5 text-muted">
-            <li>Send this key to your Nightwatch team.</li>
+            <li>Send this key to your NightWatch team.</li>
             <li>They connect your computers through Wazuh. Nothing to install on your side.</li>
-            <li>Your computers appear under Machines on their own, and Nightwatch starts watching.</li>
+            <li>Your computers appear under Machines on their own, and NightWatch starts watching.</li>
           </ol>
         </div>
         <Link
@@ -99,7 +99,7 @@ export function RegisterForm() {
     <form onSubmit={onSubmit} data-wide className="space-y-5">
       <div>
         <h1 className="text-xl font-semibold">Set up your organization</h1>
-        <p className="mt-1 text-sm text-muted">Takes about a minute. Your Nightwatch team handles the technical setup.</p>
+        <p className="mt-1 text-sm text-muted">Takes about a minute. Your NightWatch team handles the technical setup.</p>
       </div>
       <FormError message={error} />
 
@@ -179,7 +179,7 @@ export function RegisterForm() {
               {busy ? "Setting up…" : "Create organization"}
             </PrimaryButton>
             <p className="text-center text-sm text-muted">
-              Already using Nightwatch?{" "}
+              Already using NightWatch?{" "}
               <Link href="/login" className="font-medium text-info underline-offset-4 hover:underline">
                 Sign in
               </Link>

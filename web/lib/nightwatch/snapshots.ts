@@ -151,7 +151,7 @@ export interface HourBucket {
   hour: string;
   /** Alerts that became part of an incident. */
   flagged: number;
-  /** Everything else Nightwatch saw and logged. */
+  /** Everything else NightWatch saw and logged. */
   routine: number;
 }
 

@@ -1,4 +1,4 @@
-// Sessions for Nightwatch.
+// Sessions for NightWatch.
 //
 // The browser gets a random 256-bit token in an HttpOnly cookie. The database stores only
 // its SHA-256, with an expiry, and logout revokes it server-side. No JWTs, nothing in

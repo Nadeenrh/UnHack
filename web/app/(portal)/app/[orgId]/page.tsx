@@ -78,7 +78,7 @@ export default async function DashboardPage({ params }: { params: Promise<{ orgI
           </Link>
         }
       >
-        {open.length ? <IncidentTable incidents={open.slice(0, 8)} orgId={orgId} /> : <EmptyState title="Nothing open right now">Nightwatch is watching. New incidents show up here.</EmptyState>}
+        {open.length ? <IncidentTable incidents={open.slice(0, 8)} orgId={orgId} /> : <EmptyState title="Nothing open right now">NightWatch is watching. New incidents show up here.</EmptyState>}
       </Panel>
     </>
   );

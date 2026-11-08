@@ -57,7 +57,7 @@ export function SiteKeys({ orgId, sites, editable }: { orgId: string; sites: Sit
             <div className="mt-3 rounded-md border-2 border-lantern bg-lantern-soft p-3 text-sm">
               <p className="font-medium">New key. Copy it now: it won&apos;t be shown again.</p>
               <code className="mt-2 block font-mono break-all">{fresh.key}</code>
-              <p className="mt-2">Send it to your Nightwatch team. Alerts stop arriving until they switch your connection to the new key.</p>
+              <p className="mt-2">Send it to your NightWatch team. Alerts stop arriving until they switch your connection to the new key.</p>
             </div>
           )}
         </li>

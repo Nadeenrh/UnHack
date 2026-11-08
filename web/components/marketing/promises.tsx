@@ -1,4 +1,4 @@
-// The promises Nightwatch makes. Shown on the homepage, the sign-in page and (as pills) the
+// The promises NightWatch makes. Shown on the homepage, the sign-in page and (as pills) the
 // sign-up page, so the wording lives here once.
 
 const ICONS = {
@@ -24,7 +24,7 @@ export const PROMISES: { icon: keyof typeof ICONS; title: string; body: string }
   {
     icon: "check",
     title: "Nothing happens without you",
-    body: "You approve every action on your network, unless you choose to let Nightwatch act on its own.",
+    body: "You approve every action on your network, unless you choose to let NightWatch act on its own.",
   },
   {
     icon: "eye",
@@ -47,12 +47,12 @@ export function PromiseIcon({ name, small = false }: { name: keyof typeof ICONS;
   );
 }
 
-/** The promises as short pills, staggered so they read as a loose cluster rather than a grid. */
+/** The promises as short pills on one line (they wrap only on narrow screens). */
 export function PromisePills() {
   return (
-    <ul className="flex max-w-lg flex-wrap justify-center gap-x-3 gap-y-3 sm:[&>li:nth-child(even)]:translate-y-2">
+    <ul className="flex flex-wrap justify-center gap-2 lg:flex-nowrap">
       {PROMISES.map((p) => (
-        <li key={p.title} className="flex items-center gap-2 rounded-md bg-night py-1.5 pr-3 pl-1.5 text-sm font-semibold ring-1 ring-line">
+        <li key={p.title} className="flex items-center gap-2 rounded-md bg-night py-1 pr-3 pl-1 text-sm font-semibold whitespace-nowrap ring-1 ring-line">
           <PromiseIcon name={p.icon} small />
           {p.title}
         </li>

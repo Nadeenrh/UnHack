@@ -1,4 +1,4 @@
-// Nightwatch plans. Prices are placeholders the team can change.
+// NightWatch plans. Prices are placeholders the team can change.
 // The pitch: a security analyst is ~$80k/year and enterprise SOCs run thousands a month,
 // so even "Plus" is a fraction of that. Picking a plan is all we do here, no card is taken.
 
@@ -20,7 +20,7 @@ export const PLANS: Plan[] = [
     price: "Free",
     cadence: "for 30 days",
     machines: "Up to 5 machines",
-    blurb: "Try Nightwatch on a few computers. No card needed.",
+    blurb: "Try NightWatch on a few computers. No card needed.",
   },
   {
     id: "standard",

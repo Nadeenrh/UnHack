@@ -25,7 +25,7 @@ export default async function SettingsPage({ params }: { params: Promise<{ orgId
     <>
       <PageHeader title="Settings" subtitle={owner ? undefined : "Only owners can change these."} />
       <div className="space-y-6">
-        <Panel title="Your Nightwatch team">
+        <Panel title="Your NightWatch team">
           <div className="grid gap-4 px-5 py-4 text-sm sm:grid-cols-3">
             <div>
               <div className="text-muted">Email</div>
@@ -49,9 +49,9 @@ export default async function SettingsPage({ params }: { params: Promise<{ orgId
           </p>
         </Panel>
 
-        <Panel title="What Nightwatch may do on its own">
+        <Panel title="What NightWatch may do on its own">
           <p className="border-b border-line px-5 py-3 text-sm text-muted">
-            For each kind of response, choose whether Nightwatch acts right away, asks an approver, or only recommends it. Anything that
+            For each kind of response, choose whether NightWatch acts right away, asks an approver, or only recommends it. Anything that
             affects a machine or an account always needs a person.
           </p>
           <PolicyEditor orgId={orgId} policies={policies} editable={owner} />
@@ -59,7 +59,7 @@ export default async function SettingsPage({ params }: { params: Promise<{ orgId
 
         <Panel title="Monitoring connections">
           <p className="border-b border-line px-5 py-3 text-sm text-muted">
-            Each site sends its alerts to Nightwatch with its own key. Replace a key if you think it leaked, then send the new one to your Nightwatch team.
+            Each site sends its alerts to NightWatch with its own key. Replace a key if you think it leaked, then send the new one to your NightWatch team.
           </p>
           <SiteKeys
             orgId={orgId}

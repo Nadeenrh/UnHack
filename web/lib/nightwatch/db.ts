@@ -1,5 +1,5 @@
 // Small typed layer over the shared mysql2 pool (lib/database_handler.ts).
-// Every Nightwatch query goes through here, always with ? placeholders, never string-built values.
+// Every NightWatch query goes through here, always with ? placeholders, never string-built values.
 
 import type { PoolConnection, ResultSetHeader, RowDataPacket } from "mysql2/promise";
 import { getPool } from "@/lib/database_handler";

@@ -21,7 +21,7 @@ export default async function MachinesPage({ params }: { params: Promise<{ orgId
     <>
       <PageHeader
         title="Machines"
-        subtitle="The computers Nightwatch watches for you. This list updates by itself. Your Nightwatch team adds and removes machines."
+        subtitle="The computers NightWatch watches for you. This list updates by itself. Your NightWatch team adds and removes machines."
       />
       {offline > 0 && (
         <div role="status" className="mb-4 rounded-lg border border-lantern/50 bg-lantern-soft px-5 py-3 text-sm">
@@ -29,8 +29,8 @@ export default async function MachinesPage({ params }: { params: Promise<{ orgId
             {offline} of {assets.length} {assets.length === 1 ? "machine isn't" : "machines aren't"} reporting in
           </p>
           <p className="mt-0.5">
-            Nightwatch can&apos;t protect a computer it can&apos;t hear from. Usually it&apos;s just switched off or off the network. If it
-            should be on, tell your Nightwatch team. They can see this too.
+            NightWatch can&apos;t protect a computer it can&apos;t hear from. Usually it&apos;s just switched off or off the network. If it
+            should be on, tell your NightWatch team. They can see this too.
           </p>
         </div>
       )}
@@ -73,7 +73,7 @@ export default async function MachinesPage({ params }: { params: Promise<{ orgId
           </div>
         ) : (
           <EmptyState title="No machines yet">
-            Your Nightwatch team is connecting your computers. They appear here by themselves once they start reporting.
+            Your NightWatch team is connecting your computers. They appear here by themselves once they start reporting.
           </EmptyState>
         )}
       </Panel>

@@ -42,7 +42,7 @@ export function Shell({ nav, user, orgs, currentOrgId, providerLink, banner, chi
         <aside className="text-ink lg:sticky lg:top-0 lg:flex lg:h-screen lg:flex-col">
           <Link href="/" className="flex items-center gap-2.5 px-5 py-5">
             <Logo />
-            <span className="text-lg font-semibold tracking-tight">Nightwatch</span>
+            <span className="text-lg font-semibold tracking-tight">NightWatch</span>
           </Link>
           <StatusBlock />
           <SidebarNav items={nav} />

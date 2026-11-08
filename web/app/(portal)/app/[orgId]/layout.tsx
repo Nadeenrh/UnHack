@@ -28,6 +28,7 @@ export default async function ClientPortalLayout({
         { href: base, label: "Dashboard", exact: true },
         { href: `${base}/incidents`, label: "Incidents", count: pending },
         { href: `${base}/machines`, label: "Machines" },
+        { href: `${base}/agents`, label: "AI agents" },
         { href: `${base}/activity`, label: "Activity log" },
         { href: `${base}/settings`, label: "Settings" },
       ]}

@@ -18,7 +18,7 @@ const SOURCE_LABEL: Record<string, string> = {
   urlscan: "urlscan",
   pihole: "DNS filter",
   logwatch: "LogWatch",
-  agent: "Nightwatch analysis",
+  agent: "NightWatch analysis",
 };
 
 /** "under a second", "4.2 seconds", "3 minutes". */
@@ -51,7 +51,7 @@ export default async function IncidentPage({ params }: { params: Promise<{ orgId
     }
   }
 
-  // How fast Nightwatch caught it: from the alert firing on the machine (detected_at) to this
+  // How fast NightWatch caught it: from the alert firing on the machine (detected_at) to this
   // incident opening (created_at). Fixture data is loaded in bulk, so only live and replayed
   // incidents get a number, and only when the clocks agree (0 to 10 minutes).
   const caughtMs = Date.parse(incident.created_at) - Date.parse(incident.detected_at);
@@ -186,7 +186,7 @@ export default async function IncidentPage({ params }: { params: Promise<{ orgId
           )}
 
           {wazuhHome && (
-            <Panel title="For the Nightwatch team">
+            <Panel title="For the NightWatch team">
               <p className="px-5 pt-3 text-sm text-muted">The full alert history and raw logs are in Wazuh. The client doesn&apos;t see this panel.</p>
               <div className="px-5 py-3">
                 <a

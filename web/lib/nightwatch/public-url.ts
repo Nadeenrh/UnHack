@@ -1,7 +1,7 @@
 import { headers } from "next/headers";
 
 /**
- * The address other machines use to reach this Nightwatch server (for the Wazuh hook_url).
+ * The address other machines use to reach this NightWatch server (for the Wazuh hook_url).
  * NIGHTWATCH_PUBLIC_URL wins, because the browser may be on "localhost" while the Wazuh
  * manager needs this machine's network address (e.g. http://192.168.8.50:3000).
  */

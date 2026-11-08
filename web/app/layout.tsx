@@ -9,7 +9,7 @@ import "@fontsource/ibm-plex-mono/500.css";
 import "./globals.css";
 
 export const metadata: Metadata = {
-  title: { default: "Nightwatch", template: "%s · Nightwatch" },
+  title: { default: "NightWatch", template: "%s · NightWatch" },
   description: "Round-the-clock security monitoring for organizations without a security team.",
 };
 

@@ -27,16 +27,16 @@ const EVENT: Record<string, string> = {
   policy_changed: "Policy changed",
   ingest_key_rotated: "Ingest key replaced",
   organization_created: "Organization created",
-  support_session_started: "Nightwatch support opened your workspace",
-  support_session_ended: "Nightwatch support closed your workspace",
+  support_session_started: "NightWatch support opened your workspace",
+  support_session_ended: "NightWatch support closed your workspace",
 };
 
 const ACTOR: Record<string, string> = {
   user: "Person",
   agent: "AI agent",
-  system: "Nightwatch",
+  system: "NightWatch",
   policy: "Policy",
-  provider_support: "Nightwatch support",
+  provider_support: "NightWatch support",
 };
 
 export default async function ActivityPage({ params }: { params: Promise<{ orgId: string }> }) {
@@ -189,7 +189,7 @@ function AiSummary({ orgId, s }: { orgId: string; s: DaySummary }) {
   const sentence =
     s.seen === 0
       ? "No events from your machines in the last 24 hours. If that's unexpected, check the Machines page."
-      : `Nightwatch watched ${plural(s.seen, "event", "events")} from ${plural(s.machines, "machine", "machines")}. ` +
+      : `NightWatch watched ${plural(s.seen, "event", "events")} from ${plural(s.machines, "machine", "machines")}. ` +
         `${s.flagged ? `${s.flagged} needed a closer look` : "None needed a closer look"}` +
         `${s.incidents ? `, and the AI agents opened ${plural(s.incidents, "incident", "incidents")}` : ""}. ` +
         (s.waiting ? `${plural(s.waiting, "decision is", "decisions are")} waiting for you.` : "Nothing is waiting on you.");

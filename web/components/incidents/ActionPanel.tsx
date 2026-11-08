@@ -94,7 +94,7 @@ export function ActionPanel({
 function ActionOutcome({ action: a }: { action: Action }) {
   const lines: React.ReactNode[] = [];
   if (a.status === "proposed") {
-    lines.push("Your policy says a person does this one themselves. Nightwatch won't do it automatically.");
+    lines.push("Your policy says a person does this one themselves. NightWatch won't do it automatically.");
   }
   if (a.decided_by) {
     const verb = a.status === "denied" ? "Denied" : a.decided_by.kind === "policy" ? "Approved automatically by your policy" : "Approved";
@@ -154,7 +154,7 @@ function DecisionCard({
       }
       router.refresh();
     } catch {
-      setError("Couldn't reach Nightwatch. Check your connection and try again.");
+      setError("Couldn't reach NightWatch. Check your connection and try again.");
     } finally {
       setBusy(null);
     }

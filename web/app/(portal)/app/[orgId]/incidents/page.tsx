@@ -28,7 +28,7 @@ export default async function IncidentsPage({
 
   return (
     <>
-      <PageHeader title="Incidents" subtitle="Everything Nightwatch has investigated, newest first." />
+      <PageHeader title="Incidents" subtitle="Everything NightWatch has investigated, newest first." />
       <nav aria-label="Filter incidents" className="mb-4 flex gap-1">
         {TABS.map((t) => (
           <Link

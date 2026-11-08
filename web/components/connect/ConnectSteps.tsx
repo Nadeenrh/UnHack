@@ -28,7 +28,7 @@ function Step({ n, title, children }: { n: number; title: string; children: Reac
 }
 
 /**
- * How to point a Wazuh server at Nightwatch. Shown right after sign-up (with the real key,
+ * How to point a Wazuh server at NightWatch. Shown right after sign-up (with the real key,
  * which exists only at that moment) and on the Connect page (with a placeholder).
  */
 export function ConnectSteps({
@@ -47,7 +47,7 @@ export function ConnectSteps({
     <div className="space-y-4">
       {loopback && (
         <p role="note" className="rounded-md bg-lantern-soft px-3 py-2 text-sm">
-          You&apos;re opening Nightwatch as <span className="font-mono">{new URL(baseUrl).host}</span>, which only works on this computer.
+          You&apos;re opening NightWatch as <span className="font-mono">{new URL(baseUrl).host}</span>, which only works on this computer.
           The Wazuh manager needs this computer&apos;s network address instead (for example{" "}
           <span className="font-mono">http://192.168.8.50:3000</span>). Set <span className="font-mono">NIGHTWATCH_PUBLIC_URL</span>{" "}
           to fill it in here.
@@ -61,11 +61,11 @@ export function ConnectSteps({
             Wazuh&apos;s install guide
           </a>
         </Step>
-        <Step n={2} title="Add the Nightwatch forwarder to the Wazuh manager">
-          Run these on the manager. They download a small script that passes each alert to Nightwatch. Once per manager.
+        <Step n={2} title="Add the NightWatch forwarder to the Wazuh manager">
+          Run these on the manager. They download a small script that passes each alert to NightWatch. Once per manager.
           <CodeBlock code={installCommands(baseUrl)} label="install commands" />
         </Step>
-        <Step n={3} title="Point the client's alerts at Nightwatch">
+        <Step n={3} title="Point the client's alerts at NightWatch">
           Paste this inside <span className="font-mono">&lt;ossec_config&gt;</span> in{" "}
           <span className="font-mono">/var/ossec/etc/ossec.conf</span>, then restart with{" "}
           <span className="font-mono">sudo systemctl restart wazuh-manager</span>.

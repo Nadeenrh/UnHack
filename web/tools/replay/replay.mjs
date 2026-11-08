@@ -1,5 +1,5 @@
 #!/usr/bin/env node
-// Replay recorded Wazuh alerts into Nightwatch. Demo fallback when the live lab misbehaves:
+// Replay recorded Wazuh alerts into NightWatch. Demo fallback when the live lab misbehaves:
 // the alerts are real recordings, and everything after ingestion (agents, approval,
 // executor, audit) still runs live.
 //
