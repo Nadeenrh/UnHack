@@ -49,6 +49,13 @@ export const ACTION_VERB: Record<string, string> = {
   notify_only: "Approve",
 };
 
+/** The team's names for the AI agents. Contract values stay triage / intel / investigator. */
+export const AGENT_LABEL: Record<string, string> = {
+  triage: "SOC Analyst: triage",
+  intel: "Threat Intel",
+  investigator: "SOC Analyst: investigation",
+};
+
 export const SECTOR_LABEL: Record<string, string> = {
   small_business: "Small or medium business",
   healthcare: "Clinic or health practice",

@@ -1,6 +1,6 @@
 import Link from "next/link";
 import { notFound } from "next/navigation";
-import { capitalize, formatDateTime, formatTime } from "@/components/format";
+import { AGENT_LABEL, capitalize, formatDateTime, formatTime } from "@/components/format";
 import { ActionPanel } from "@/components/incidents/ActionPanel";
 import { DataSourceBadge, IncidentStatusBadge, SeverityBadge } from "@/components/ui/Badges";
 import { Panel } from "@/components/ui/Panel";
@@ -173,13 +173,13 @@ export default async function IncidentPage({ params }: { params: Promise<{ orgId
             </Panel>
           )}
 
-          <Panel title="How it was investigated">
+          <Panel title="How the AI agents investigated">
             {incident.agent_runs.length ? (
               <ul className="text-sm">
                 {incident.agent_runs.map((r) => (
                   <li key={r.id} className="border-b border-line px-5 py-3 last:border-0">
                     <div className="flex items-center justify-between gap-2">
-                      <span className="font-medium">{capitalize(r.agent)}</span>
+                      <span className="font-medium">{AGENT_LABEL[r.agent] ?? capitalize(r.agent)}</span>
                       <span className={r.status === "succeeded" ? "text-ok" : r.status === "failed" ? "text-bad" : "text-muted"}>
                         {capitalize(r.status)}
                       </span>

@@ -1,4 +1,3 @@
-import Link from "next/link";
 import { capitalize, timeAgo } from "@/components/format";
 import { EmptyState, PageHeader, Panel } from "@/components/ui/Panel";
 import { requirePageOrg } from "@/lib/nightwatch/page-auth";
@@ -22,12 +21,19 @@ export default async function MachinesPage({ params }: { params: Promise<{ orgId
     <>
       <PageHeader
         title="Machines"
-        subtitle={
-          assets.length
-            ? `${assets.length - offline} of ${assets.length} reporting in.${offline ? " A machine that stops reporting can't be protected." : ""}`
-            : undefined
-        }
+        subtitle="The computers Nightwatch watches for you. This list updates by itself. Your Nightwatch team adds and removes machines."
       />
+      {offline > 0 && (
+        <div role="status" className="mb-4 rounded-lg border border-lantern/50 bg-lantern-soft px-5 py-3 text-sm">
+          <p className="font-semibold">
+            {offline} of {assets.length} {assets.length === 1 ? "machine isn't" : "machines aren't"} reporting in
+          </p>
+          <p className="mt-0.5">
+            Nightwatch can&apos;t protect a computer it can&apos;t hear from. Usually it&apos;s just switched off or off the network. If it
+            should be on, tell your Nightwatch team. They can see this too.
+          </p>
+        </div>
+      )}
       <Panel>
         {assets.length ? (
           <div className="overflow-x-auto">
@@ -67,10 +73,7 @@ export default async function MachinesPage({ params }: { params: Promise<{ orgId
           </div>
         ) : (
           <EmptyState title="No machines yet">
-            Machines appear here as soon as your monitoring sends its first alert.{" "}
-            <Link href={`/app/${orgId}/connect`} className="font-medium text-info hover:underline">
-              Connect your first machine
-            </Link>
+            Your Nightwatch team is connecting your computers. They appear here by themselves once they start reporting.
           </EmptyState>
         )}
       </Panel>
