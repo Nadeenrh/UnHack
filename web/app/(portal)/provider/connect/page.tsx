@@ -1,16 +1,15 @@
-import { ConnectSteps } from "@/components/connect/ConnectSteps";
+import Link from "next/link";
 import { SECTOR_LABEL, timeAgo } from "@/components/format";
 import { EmptyState, PageHeader, Panel } from "@/components/ui/Panel";
 import { iso, rows } from "@/lib/nightwatch/db";
 import { requirePageProvider } from "@/lib/nightwatch/page-auth";
-import { isLoopback, publicBaseUrl } from "@/lib/nightwatch/public-url";
 
 export const metadata = { title: "Connect a client" };
 
 // A client counts as connected once Wazuh has delivered at least one alert with their key.
 const QUIET_AFTER_MS = 24 * 60 * 60 * 1000;
 
-function connection(last: string | null, now = Date.now()): [string, string] {
+export function connection(last: string | null, now = Date.now()): [string, string] {
   if (!last) return ["Waiting for the first alert", "bg-muted"];
   if (now - new Date(last).getTime() > QUIET_AFTER_MS) return [`Quiet since ${timeAgo(last)}`, "bg-lantern"];
   return [`Receiving, last ${timeAgo(last)}`, "bg-ok"];
@@ -18,7 +17,6 @@ function connection(last: string | null, now = Date.now()): [string, string] {
 
 export default async function ProviderConnectPage() {
   await requirePageProvider();
-  const baseUrl = await publicBaseUrl();
   const clients = await rows<{
     org_id: string;
     name: string;
@@ -36,58 +34,47 @@ export default async function ProviderConnectPage() {
 
   return (
     <>
-      <PageHeader
-        title="Connect a client"
-        subtitle="We connect each client's computers through Wazuh. The client never installs or configures anything themselves."
-      />
+      <PageHeader title="Connect a client" subtitle="Every organization we protect. Open one to see its contact, its key and how to connect it.">
+        <span className="rounded-md px-3 py-1.5 text-sm font-medium text-muted ring-1 ring-line">Add a client — coming soon</span>
+      </PageHeader>
 
-      <div className="space-y-6">
-        <Panel title="Connection status">
-          {clients.length ? (
-            <div className="overflow-x-auto">
-              <table className="w-full text-sm">
-                <thead>
-                  <tr className="border-b border-line text-left text-muted">
-                    <th className="px-5 py-2 font-medium">Client</th>
-                    <th className="px-3 py-2 font-medium">Key starts with</th>
-                    <th className="px-3 py-2 font-medium">Machines</th>
-                    <th className="px-5 py-2 text-right font-medium">Alerts</th>
-                  </tr>
-                </thead>
-                <tbody>
-                  {clients.map((c) => {
-                    const [label, dot] = connection(iso(c.last_alert));
-                    return (
-                      <tr key={c.org_id} className="border-b border-line last:border-0">
-                        <td className="px-5 py-3">
-                          <div className="font-medium">{c.name}</div>
-                          <div className="text-xs text-muted">{SECTOR_LABEL[c.sector] ?? c.sector}</div>
-                        </td>
-                        <td className="px-3 py-3 font-mono">{c.key_prefix ?? "No active key"}</td>
-                        <td className="px-3 py-3 tabular-nums">{Number(c.machines)}</td>
-                        <td className="px-5 py-3 text-right">
-                          <span className="inline-flex items-center gap-2">
-                            <span aria-hidden className={`size-2 rounded-full ${dot}`} />
-                            {label}
-                          </span>
-                        </td>
-                      </tr>
-                    );
-                  })}
-                </tbody>
-              </table>
-            </div>
-          ) : (
-            <EmptyState title="No clients yet">Clients appear here when they sign up.</EmptyState>
-          )}
-        </Panel>
-
-        <Panel title="Setup steps">
-          <div className="px-5 py-5">
-            <ConnectSteps baseUrl={baseUrl} ingestKey={null} loopback={isLoopback(baseUrl)} />
-          </div>
-        </Panel>
-      </div>
+      <Panel title="Connection status">
+        {clients.length ? (
+          <ul>
+            {clients.map((c) => {
+              const [label, dot] = connection(iso(c.last_alert));
+              return (
+                <li key={c.org_id}>
+                  <Link
+                    href={`/provider/connect/${c.org_id}`}
+                    className="flex flex-wrap items-center gap-x-6 gap-y-2 border-b border-line px-5 py-4 last:border-0 hover:bg-canvas"
+                  >
+                    <div className="min-w-48 flex-1">
+                      <div className="font-medium">{c.name}</div>
+                      <div className="text-xs text-muted">{SECTOR_LABEL[c.sector] ?? c.sector}</div>
+                    </div>
+                    <div className="text-sm text-muted">
+                      Key <span className="font-mono">{c.key_prefix ?? "none"}</span>
+                    </div>
+                    <div className="text-sm tabular-nums text-muted">
+                      {Number(c.machines)} {Number(c.machines) === 1 ? "machine" : "machines"}
+                    </div>
+                    <div className="flex min-w-48 items-center gap-2 text-sm">
+                      <span aria-hidden className={`size-2 rounded-full ${dot}`} />
+                      {label}
+                    </div>
+                    <span aria-hidden className="text-muted">
+                      ›
+                    </span>
+                  </Link>
+                </li>
+              );
+            })}
+          </ul>
+        ) : (
+          <EmptyState title="No clients yet">Clients appear here when they sign up.</EmptyState>
+        )}
+      </Panel>
     </>
   );
 }
