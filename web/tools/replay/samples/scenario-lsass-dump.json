@@ -1,0 +1,131 @@
+[
+  {
+    "id": "scn-lsass-0001",
+    "timestamp": "2026-11-07T15:21:04.000+0000",
+    "rule": {
+      "id": "92025",
+      "level": 14,
+      "description": "LSASS memory dumped with comsvcs.dll MiniDump (credential theft).",
+      "groups": [
+        "windows",
+        "sysmon",
+        "sysmon_eid1_detections"
+      ],
+      "mitre": {
+        "id": [
+          "T1003.001"
+        ],
+        "technique": [
+          "LSASS Memory"
+        ]
+      }
+    },
+    "agent": {
+      "id": "012",
+      "name": "FRONTDESK-PC",
+      "ip": "10.0.1.31"
+    },
+    "data": {
+      "win": {
+        "system": {
+          "eventID": "1",
+          "channel": "Microsoft-Windows-Sysmon/Operational",
+          "computer": "FRONTDESK-PC"
+        },
+        "eventdata": {
+          "image": "C:\\Windows\\System32\\rundll32.exe",
+          "commandLine": "rundll32.exe C:\\Windows\\System32\\comsvcs.dll, MiniDump 712 C:\\Users\\Public\\l.dmp full",
+          "parentImage": "C:\\Windows\\System32\\cmd.exe",
+          "user": "NORTHFIELD\\frontdesk",
+          "integrityLevel": "High"
+        }
+      }
+    },
+    "location": "EventChannel"
+  },
+  {
+    "id": "scn-lsass-0002",
+    "timestamp": "2026-11-07T15:21:04.000+0000",
+    "rule": {
+      "id": "92900",
+      "level": 12,
+      "description": "Process opened lsass.exe with full access.",
+      "groups": [
+        "windows",
+        "sysmon",
+        "sysmon_eid10_detections"
+      ],
+      "mitre": {
+        "id": [
+          "T1003.001"
+        ],
+        "technique": [
+          "LSASS Memory"
+        ]
+      }
+    },
+    "agent": {
+      "id": "012",
+      "name": "FRONTDESK-PC",
+      "ip": "10.0.1.31"
+    },
+    "data": {
+      "win": {
+        "system": {
+          "eventID": "10",
+          "channel": "Microsoft-Windows-Sysmon/Operational",
+          "computer": "FRONTDESK-PC"
+        },
+        "eventdata": {
+          "sourceImage": "C:\\Windows\\System32\\rundll32.exe",
+          "targetImage": "C:\\Windows\\System32\\lsass.exe",
+          "grantedAccess": "0x1FFFFF",
+          "sourceUser": "NORTHFIELD\\frontdesk"
+        }
+      }
+    },
+    "location": "EventChannel"
+  },
+  {
+    "id": "scn-lsass-0003",
+    "timestamp": "2026-11-07T15:21:06.000+0000",
+    "rule": {
+      "id": "92910",
+      "level": 10,
+      "description": "Memory dump file written to a public folder.",
+      "groups": [
+        "windows",
+        "sysmon",
+        "sysmon_eid11_detections"
+      ],
+      "mitre": {
+        "id": [
+          "T1003.001"
+        ],
+        "technique": [
+          "LSASS Memory"
+        ]
+      }
+    },
+    "agent": {
+      "id": "012",
+      "name": "FRONTDESK-PC",
+      "ip": "10.0.1.31"
+    },
+    "data": {
+      "win": {
+        "system": {
+          "eventID": "11",
+          "channel": "Microsoft-Windows-Sysmon/Operational",
+          "computer": "FRONTDESK-PC"
+        },
+        "eventdata": {
+          "image": "C:\\Windows\\System32\\rundll32.exe",
+          "targetFilename": "C:\\Users\\Public\\l.dmp",
+          "user": "NORTHFIELD\\frontdesk"
+        }
+      }
+    },
+    "location": "EventChannel"
+  }
+]

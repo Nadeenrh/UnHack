@@ -1,0 +1,227 @@
+[
+  {
+    "id": "splunk-clop-0001",
+    "timestamp": "2021-03-16T13:45:12.936+0000",
+    "rule": {
+      "id": "100301",
+      "level": 10,
+      "description": "Shadow copy storage shrunk with vssadmin (backups made unusable).",
+      "groups": [
+        "windows",
+        "sysmon",
+        "sysmon_eid1_detections"
+      ],
+      "mitre": {
+        "id": [
+          "T1490"
+        ],
+        "technique": [
+          "Inhibit System Recovery"
+        ]
+      }
+    },
+    "agent": {
+      "id": "011",
+      "name": "FILESERVER",
+      "ip": "10.0.1.20"
+    },
+    "data": {
+      "win": {
+        "system": {
+          "eventID": "1",
+          "channel": "Microsoft-Windows-Sysmon/Operational",
+          "computer": "FILESERVER"
+        },
+        "eventdata": {
+          "image": "C:\\Windows\\SysWOW64\\vssadmin.exe",
+          "commandLine": "vssadmin  resize shadowstorage /for=e: /on=e: /maxsize=401MB",
+          "parentImage": "C:\\Windows\\SysWOW64\\cmd.exe",
+          "parentCommandLine": "C:\\Windows\\system32\\cmd.exe /c \"\"C:\\Users\\Public\\resort0-0-0-1-1-0.bat\" \"",
+          "user": "ATTACKRANGE\\Administrator",
+          "hashes": "MD5=7c49576cf1abd8b22fd819fdb9f5917a,SHA256=8a597914c4481c7c78936e0e581107a96c5ad02f7353e12d0666f330ca89f051,IMPHASH=04bb7bb8a9e3772b1e6595e65586e268",
+          "integrityLevel": "High",
+          "currentDirectory": "C:\\Users\\Public\\"
+        }
+      }
+    },
+    "location": "EventChannel"
+  },
+  {
+    "id": "splunk-clop-0002",
+    "timestamp": "2021-03-16T13:45:12.363+0000",
+    "rule": {
+      "id": "100302",
+      "level": 13,
+      "description": "All shadow copies deleted with vssadmin.",
+      "groups": [
+        "windows",
+        "sysmon",
+        "sysmon_eid1_detections"
+      ],
+      "mitre": {
+        "id": [
+          "T1490"
+        ],
+        "technique": [
+          "Inhibit System Recovery"
+        ]
+      }
+    },
+    "agent": {
+      "id": "011",
+      "name": "FILESERVER",
+      "ip": "10.0.1.20"
+    },
+    "data": {
+      "win": {
+        "system": {
+          "eventID": "1",
+          "channel": "Microsoft-Windows-Sysmon/Operational",
+          "computer": "FILESERVER"
+        },
+        "eventdata": {
+          "image": "C:\\Windows\\SysWOW64\\vssadmin.exe",
+          "commandLine": "vssadmin  Delete Shadows /all /quiet",
+          "parentImage": "C:\\Windows\\SysWOW64\\cmd.exe",
+          "parentCommandLine": "C:\\Windows\\system32\\cmd.exe /c \"\"C:\\Users\\Public\\resort0-0-0-1-1-0.bat\" \"",
+          "user": "ATTACKRANGE\\Administrator",
+          "hashes": "MD5=7c49576cf1abd8b22fd819fdb9f5917a,SHA256=8a597914c4481c7c78936e0e581107a96c5ad02f7353e12d0666f330ca89f051,IMPHASH=04bb7bb8a9e3772b1e6595e65586e268",
+          "integrityLevel": "High",
+          "currentDirectory": "C:\\Users\\Public\\"
+        }
+      }
+    },
+    "location": "EventChannel"
+  },
+  {
+    "id": "splunk-clop-0003",
+    "timestamp": "2021-03-16T14:01:32.276+0000",
+    "rule": {
+      "id": "100303",
+      "level": 12,
+      "description": "Program started from C:\\Users\\Public: clop.exe.",
+      "groups": [
+        "windows",
+        "sysmon",
+        "sysmon_eid1_detections"
+      ],
+      "mitre": {
+        "id": [
+          "T1204.002"
+        ],
+        "technique": [
+          "Malicious File"
+        ]
+      }
+    },
+    "agent": {
+      "id": "011",
+      "name": "FILESERVER",
+      "ip": "10.0.1.20"
+    },
+    "data": {
+      "win": {
+        "system": {
+          "eventID": "1",
+          "channel": "Microsoft-Windows-Sysmon/Operational",
+          "computer": "FILESERVER"
+        },
+        "eventdata": {
+          "image": "C:\\Users\\Public\\clop.exe",
+          "commandLine": "\"C:\\Users\\Public\\clop.exe\" ",
+          "parentImage": "C:\\Windows\\explorer.exe",
+          "parentCommandLine": "C:\\Windows\\Explorer.EXE /NOUACCHECK",
+          "user": "ATTACKRANGE\\Administrator",
+          "hashes": "MD5=c41a0e1ddeb85b6326a3dc403a5fd0fa,SHA256=d0cde86d47219e9c56b717f55dcdb01b0566344c13aa671613598cab427345b9,IMPHASH=4742764f9c87b3d416555b92c042163f",
+          "integrityLevel": "High",
+          "currentDirectory": "C:\\Users\\Public\\"
+        }
+      }
+    },
+    "location": "EventChannel"
+  },
+  {
+    "id": "splunk-clop-0004",
+    "timestamp": "2021-03-16T14:01:44.950+0000",
+    "rule": {
+      "id": "100304",
+      "level": 13,
+      "description": "Ransom note written: ClopReadMe.txt.",
+      "groups": [
+        "windows",
+        "sysmon",
+        "sysmon_eid11"
+      ],
+      "mitre": {
+        "id": [
+          "T1486"
+        ],
+        "technique": [
+          "Data Encrypted for Impact"
+        ]
+      }
+    },
+    "agent": {
+      "id": "011",
+      "name": "FILESERVER",
+      "ip": "10.0.1.20"
+    },
+    "data": {
+      "win": {
+        "system": {
+          "eventID": "11",
+          "channel": "Microsoft-Windows-Sysmon/Operational",
+          "computer": "FILESERVER"
+        },
+        "eventdata": {
+          "image": "C:\\Users\\Public\\clop.exe",
+          "targetFilename": "C:\\Users\\Administrator\\AppData\\ClopReadMe.txt"
+        }
+      }
+    },
+    "location": "EventChannel"
+  },
+  {
+    "id": "splunk-clop-0005",
+    "timestamp": "2021-03-16T14:01:44.950+0000",
+    "rule": {
+      "id": "100305",
+      "level": 15,
+      "description": "Ransomware: clop.exe wrote ClopReadMe.txt in 245 folders and renamed 901 files to .Clop.",
+      "groups": [
+        "windows",
+        "sysmon",
+        "nightwatch_correlation"
+      ],
+      "mitre": {
+        "id": [
+          "T1486"
+        ],
+        "technique": [
+          "Data Encrypted for Impact"
+        ]
+      }
+    },
+    "agent": {
+      "id": "011",
+      "name": "FILESERVER",
+      "ip": "10.0.1.20"
+    },
+    "data": {
+      "win": {
+        "system": {
+          "eventID": "11",
+          "channel": "Microsoft-Windows-Sysmon/Operational",
+          "computer": "FILESERVER"
+        },
+        "eventdata": {
+          "image": "C:\\Users\\Public\\clop.exe",
+          "targetFilename": "C:\\Users\\Administrator\\AppData\\ClopReadMe.txt",
+          "ransomNotes": "245",
+          "renamedFiles": "901"
+        }
+      }
+    },
+    "location": "EventChannel"
+  }
+]

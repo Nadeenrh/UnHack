@@ -51,7 +51,8 @@ export function ActionStatusBadge({ status }: { status: ActionStatus }) {
 }
 
 export function DataSourceBadge({ source }: { source: DataSource }) {
-  if (source === "live") return null;
+  // Demo mode (NIGHTWATCH_DEMO=1) presents everything as live. Only rendered from server components.
+  if (source === "live" || process.env.NIGHTWATCH_DEMO === "1") return null;
   return source === "fixture" ? (
     <Pill className="bg-canvas text-muted border border-dashed border-muted" title="Demo data, not from a real system">
       Sample data

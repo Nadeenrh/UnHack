@@ -18,6 +18,7 @@ import { audit } from "./audit";
 import { runLater } from "./background";
 import { validateInvestigationRequest, validateInvestigationResult } from "./contracts";
 import { newId, sha256 } from "./crypto";
+import { DEMO, scriptedInvestigation } from "./demo";
 import { exec, one, rows, tx, type Executor } from "./db";
 import { executeAction } from "./executor";
 import { refreshIncidentStatus } from "./incidents";
@@ -85,6 +86,17 @@ async function investigateOnce(orgId: string, incidentId: string): Promise<void>
   if (!check.ok) throw new Error(`built an invalid investigation request: ${check.error}`);
 
   const url = process.env.AGENT_SERVICE_URL;
+  if (!url && DEMO) {
+    // Demo mode: scripted agents built from this incident's own alerts, then the normal path
+    // (contract validation, safety re-checks, policy) exactly as for a real agent reply.
+    const scripted = validateInvestigationResult(await scriptedInvestigation(request));
+    if (!scripted.ok) {
+      await recordProblem(orgId, incidentId, "failed", `Scripted investigation didn't match the contract: ${scripted.error}`.slice(0, 1000));
+      return;
+    }
+    await applyInvestigation(orgId, incidentId, scripted.value);
+    return;
+  }
   if (!url) {
     await recordProblem(orgId, incidentId, "skipped", "Agent service not configured (AGENT_SERVICE_URL), so no AI investigation ran.");
     return;

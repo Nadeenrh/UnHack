@@ -1,0 +1,363 @@
+[
+  {
+    "id": "scn-rdp-0001",
+    "timestamp": "2026-11-07T03:14:14.000+0000",
+    "rule": {
+      "id": "60122",
+      "level": 5,
+      "description": "Logon failure - unknown user or bad password.",
+      "groups": [
+        "windows",
+        "windows_security",
+        "authentication_failed"
+      ],
+      "mitre": {
+        "id": [
+          "T1110.001"
+        ],
+        "technique": [
+          "Password Guessing"
+        ]
+      }
+    },
+    "agent": {
+      "id": "014",
+      "name": "XRAY-WS",
+      "ip": "10.0.1.50"
+    },
+    "data": {
+      "win": {
+        "system": {
+          "eventID": "4625",
+          "channel": "Security",
+          "computer": "XRAY-WS"
+        },
+        "eventdata": {
+          "targetUserName": "administrator",
+          "ipAddress": "185.220.101.47",
+          "logonType": "10",
+          "status": "0xc000006d",
+          "workstationName": "-"
+        }
+      },
+      "srcip": "185.220.101.47"
+    },
+    "location": "EventChannel"
+  },
+  {
+    "id": "scn-rdp-0002",
+    "timestamp": "2026-11-07T03:14:18.000+0000",
+    "rule": {
+      "id": "60122",
+      "level": 5,
+      "description": "Logon failure - unknown user or bad password.",
+      "groups": [
+        "windows",
+        "windows_security",
+        "authentication_failed"
+      ],
+      "mitre": {
+        "id": [
+          "T1110.001"
+        ],
+        "technique": [
+          "Password Guessing"
+        ]
+      }
+    },
+    "agent": {
+      "id": "014",
+      "name": "XRAY-WS",
+      "ip": "10.0.1.50"
+    },
+    "data": {
+      "win": {
+        "system": {
+          "eventID": "4625",
+          "channel": "Security",
+          "computer": "XRAY-WS"
+        },
+        "eventdata": {
+          "targetUserName": "admin",
+          "ipAddress": "185.220.101.47",
+          "logonType": "10",
+          "status": "0xc000006d",
+          "workstationName": "-"
+        }
+      },
+      "srcip": "185.220.101.47"
+    },
+    "location": "EventChannel"
+  },
+  {
+    "id": "scn-rdp-0003",
+    "timestamp": "2026-11-07T03:14:22.000+0000",
+    "rule": {
+      "id": "60122",
+      "level": 5,
+      "description": "Logon failure - unknown user or bad password.",
+      "groups": [
+        "windows",
+        "windows_security",
+        "authentication_failed"
+      ],
+      "mitre": {
+        "id": [
+          "T1110.001"
+        ],
+        "technique": [
+          "Password Guessing"
+        ]
+      }
+    },
+    "agent": {
+      "id": "014",
+      "name": "XRAY-WS",
+      "ip": "10.0.1.50"
+    },
+    "data": {
+      "win": {
+        "system": {
+          "eventID": "4625",
+          "channel": "Security",
+          "computer": "XRAY-WS"
+        },
+        "eventdata": {
+          "targetUserName": "xray",
+          "ipAddress": "185.220.101.47",
+          "logonType": "10",
+          "status": "0xc000006d",
+          "workstationName": "-"
+        }
+      },
+      "srcip": "185.220.101.47"
+    },
+    "location": "EventChannel"
+  },
+  {
+    "id": "scn-rdp-0004",
+    "timestamp": "2026-11-07T03:14:26.000+0000",
+    "rule": {
+      "id": "60122",
+      "level": 5,
+      "description": "Logon failure - unknown user or bad password.",
+      "groups": [
+        "windows",
+        "windows_security",
+        "authentication_failed"
+      ],
+      "mitre": {
+        "id": [
+          "T1110.001"
+        ],
+        "technique": [
+          "Password Guessing"
+        ]
+      }
+    },
+    "agent": {
+      "id": "014",
+      "name": "XRAY-WS",
+      "ip": "10.0.1.50"
+    },
+    "data": {
+      "win": {
+        "system": {
+          "eventID": "4625",
+          "channel": "Security",
+          "computer": "XRAY-WS"
+        },
+        "eventdata": {
+          "targetUserName": "administrator",
+          "ipAddress": "185.220.101.47",
+          "logonType": "10",
+          "status": "0xc000006d",
+          "workstationName": "-"
+        }
+      },
+      "srcip": "185.220.101.47"
+    },
+    "location": "EventChannel"
+  },
+  {
+    "id": "scn-rdp-0005",
+    "timestamp": "2026-11-07T03:14:30.000+0000",
+    "rule": {
+      "id": "60122",
+      "level": 5,
+      "description": "Logon failure - unknown user or bad password.",
+      "groups": [
+        "windows",
+        "windows_security",
+        "authentication_failed"
+      ],
+      "mitre": {
+        "id": [
+          "T1110.001"
+        ],
+        "technique": [
+          "Password Guessing"
+        ]
+      }
+    },
+    "agent": {
+      "id": "014",
+      "name": "XRAY-WS",
+      "ip": "10.0.1.50"
+    },
+    "data": {
+      "win": {
+        "system": {
+          "eventID": "4625",
+          "channel": "Security",
+          "computer": "XRAY-WS"
+        },
+        "eventdata": {
+          "targetUserName": "radiology",
+          "ipAddress": "185.220.101.47",
+          "logonType": "10",
+          "status": "0xc000006d",
+          "workstationName": "-"
+        }
+      },
+      "srcip": "185.220.101.47"
+    },
+    "location": "EventChannel"
+  },
+  {
+    "id": "scn-rdp-0006",
+    "timestamp": "2026-11-07T03:14:34.000+0000",
+    "rule": {
+      "id": "60122",
+      "level": 5,
+      "description": "Logon failure - unknown user or bad password.",
+      "groups": [
+        "windows",
+        "windows_security",
+        "authentication_failed"
+      ],
+      "mitre": {
+        "id": [
+          "T1110.001"
+        ],
+        "technique": [
+          "Password Guessing"
+        ]
+      }
+    },
+    "agent": {
+      "id": "014",
+      "name": "XRAY-WS",
+      "ip": "10.0.1.50"
+    },
+    "data": {
+      "win": {
+        "system": {
+          "eventID": "4625",
+          "channel": "Security",
+          "computer": "XRAY-WS"
+        },
+        "eventdata": {
+          "targetUserName": "xray",
+          "ipAddress": "185.220.101.47",
+          "logonType": "10",
+          "status": "0xc000006d",
+          "workstationName": "-"
+        }
+      },
+      "srcip": "185.220.101.47"
+    },
+    "location": "EventChannel"
+  },
+  {
+    "id": "scn-rdp-0007",
+    "timestamp": "2026-11-07T03:14:41.000+0000",
+    "rule": {
+      "id": "60106",
+      "level": 3,
+      "description": "Windows logon success.",
+      "groups": [
+        "windows",
+        "windows_security",
+        "authentication_success"
+      ],
+      "mitre": {
+        "id": [
+          "T1021.001"
+        ],
+        "technique": [
+          "Remote Desktop Protocol"
+        ]
+      }
+    },
+    "agent": {
+      "id": "014",
+      "name": "XRAY-WS",
+      "ip": "10.0.1.50"
+    },
+    "data": {
+      "win": {
+        "system": {
+          "eventID": "4624",
+          "channel": "Security",
+          "computer": "XRAY-WS"
+        },
+        "eventdata": {
+          "targetUserName": "xray",
+          "ipAddress": "185.220.101.47",
+          "logonType": "10",
+          "authenticationPackageName": "Negotiate"
+        }
+      },
+      "srcip": "185.220.101.47"
+    },
+    "location": "EventChannel"
+  },
+  {
+    "id": "scn-rdp-0008",
+    "timestamp": "2026-11-07T03:14:41.000+0000",
+    "rule": {
+      "id": "100210",
+      "level": 12,
+      "description": "Remote Desktop sign-in succeeded from the internet (185.220.101.47) after 6 failed attempts.",
+      "groups": [
+        "windows",
+        "windows_security",
+        "authentication_success",
+        "brute_force"
+      ],
+      "mitre": {
+        "id": [
+          "T1110.001",
+          "T1021.001"
+        ],
+        "technique": [
+          "Password Guessing",
+          "Remote Desktop Protocol"
+        ]
+      }
+    },
+    "agent": {
+      "id": "014",
+      "name": "XRAY-WS",
+      "ip": "10.0.1.50"
+    },
+    "data": {
+      "win": {
+        "system": {
+          "eventID": "4624",
+          "channel": "Security",
+          "computer": "XRAY-WS"
+        },
+        "eventdata": {
+          "targetUserName": "xray",
+          "ipAddress": "185.220.101.47",
+          "logonType": "10",
+          "failedBefore": "6"
+        }
+      },
+      "srcip": "185.220.101.47"
+    },
+    "location": "EventChannel"
+  }
+]

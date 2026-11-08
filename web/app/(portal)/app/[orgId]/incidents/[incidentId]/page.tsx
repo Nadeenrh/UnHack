@@ -2,10 +2,12 @@ import Link from "next/link";
 import { notFound } from "next/navigation";
 import { AGENT_LABEL, capitalize, formatDateTime, formatTime } from "@/components/format";
 import { ActionPanel } from "@/components/incidents/ActionPanel";
+import { CloseIncident } from "@/components/incidents/CloseIncident";
 import { DataSourceBadge, IncidentStatusBadge, SeverityBadge } from "@/components/ui/Badges";
 import { Panel } from "@/components/ui/Panel";
 import { isProvider, isUuid } from "@/lib/nightwatch/access";
 import { placeholders, rows } from "@/lib/nightwatch/db";
+import { DEMO, DEMO_MODEL } from "@/lib/nightwatch/demo";
 import { expireStaleActions, loadIncident } from "@/lib/nightwatch/incidents";
 import { canApprove, requirePageOrg } from "@/lib/nightwatch/page-auth";
 import { wazuhAgentLink, wazuhHomeLink } from "@/lib/nightwatch/wazuh-link";
@@ -55,7 +57,7 @@ export default async function IncidentPage({ params }: { params: Promise<{ orgId
   // incident opening (created_at). Fixture data is loaded in bulk, so only live and replayed
   // incidents get a number, and only when the clocks agree (0 to 10 minutes).
   const caughtMs = Date.parse(incident.created_at) - Date.parse(incident.detected_at);
-  const caught = incident.data_source !== "fixture" && caughtMs >= 0 && caughtMs <= 600_000 ? formatCaught(caughtMs) : null;
+  const caught = (DEMO || incident.data_source !== "fixture") && caughtMs >= 0 && caughtMs <= 600_000 ? formatCaught(caughtMs) : null;
 
   const approver = canApprove(access);
   const readOnlyReason =
@@ -141,6 +143,15 @@ export default async function IncidentPage({ params }: { params: Promise<{ orgId
         </div>
 
         <aside className="min-w-0 space-y-6">
+          <Panel title="Close incident">
+            <CloseIncident
+              orgId={orgId}
+              incidentId={incident.id}
+              status={incident.status}
+              blocked={incident.actions.some((a) => ["awaiting_approval", "approved", "executing"].includes(a.status))}
+              canDecide={approver}
+            />
+          </Panel>
           <Panel title="Machines involved">
             <ul>
               {incident.assets.map((a) => (
@@ -214,7 +225,11 @@ export default async function IncidentPage({ params }: { params: Promise<{ orgId
                     </div>
                     {r.output_summary && <p className="mt-0.5 text-muted">{r.output_summary}</p>}
                     {/* Demo data carries a placeholder model name; only show real ones. */}
-                    {!r.model?.includes("fixture") && <p className="mt-0.5 text-xs text-muted">{r.model ?? "Rule-based, no AI model"}</p>}
+                    {r.model?.includes("fixture") ? (
+                      DEMO && <p className="mt-0.5 text-xs text-muted">{DEMO_MODEL}</p>
+                    ) : (
+                      <p className="mt-0.5 text-xs text-muted">{r.model ?? "Rule-based, no AI model"}</p>
+                    )}
                   </li>
                 ))}
               </ul>

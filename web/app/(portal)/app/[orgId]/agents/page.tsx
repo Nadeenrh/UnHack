@@ -2,6 +2,7 @@ import Link from "next/link";
 import { AGENT_LABEL, capitalize, timeAgo } from "@/components/format";
 import { EmptyState, PageHeader, Panel } from "@/components/ui/Panel";
 import { iso, rows } from "@/lib/nightwatch/db";
+import { DEMO, DEMO_MODEL } from "@/lib/nightwatch/demo";
 import { requirePageOrg } from "@/lib/nightwatch/page-auth";
 
 export const metadata = { title: "AI agents" };
@@ -41,7 +42,7 @@ type RoleStats = { role: Role; incidents: number; avg_ms: number | string | null
 export default async function AgentsPage({ params }: { params: Promise<{ orgId: string }> }) {
   const { orgId } = await params;
   await requirePageOrg(orgId);
-  const connected = Boolean(process.env.AGENT_SERVICE_URL);
+  const connected = Boolean(process.env.AGENT_SERVICE_URL) || DEMO;
 
   const [stats, recent] = await Promise.all([
     rows<RoleStats>(
@@ -118,8 +119,9 @@ function AgentCard({ role, s }: { role: Role; s?: RoleStats }) {
   const p = PROFILES[role];
   const incidents = Number(s?.incidents ?? 0);
   const avgMs = s?.avg_ms == null ? null : Number(s.avg_ms);
-  const model = s?.model && !s.model.includes("fixture") ? s.model : null;
-  const samples = Number(s?.samples ?? 0);
+  // Demo mode: sample runs carry a placeholder model name, so show the configured one instead.
+  const model = s?.model && !s.model.includes("fixture") ? s.model : DEMO ? DEMO_MODEL : null;
+  const samples = DEMO ? 0 : Number(s?.samples ?? 0);
 
   return (
     <section className="flex flex-col rounded-lg bg-panel p-6 ring-1 ring-line">

@@ -17,7 +17,8 @@ export interface ShellProps {
 // Pi-hole's "Status: Active" block, told honestly: watching is always on; whether approved
 // responses really change anything depends on EXECUTOR_MODE.
 function StatusBlock() {
-  const live = process.env.EXECUTOR_MODE === "wazuh";
+  // Demo mode (NIGHTWATCH_DEMO=1) shows responses as live.
+  const live = process.env.EXECUTOR_MODE === "wazuh" || process.env.NIGHTWATCH_DEMO === "1";
   return (
     <div className="mx-5 mb-4 space-y-1.5 rounded-md bg-panel/60 px-3 py-2.5 text-xs ring-1 ring-line">
       <div className="flex items-center gap-2">

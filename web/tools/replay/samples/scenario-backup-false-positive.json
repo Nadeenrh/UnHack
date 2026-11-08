@@ -1,0 +1,88 @@
+[
+  {
+    "id": "scn-backup-0001",
+    "timestamp": "2026-11-07T02:00:03.000+0000",
+    "rule": {
+      "id": "60106",
+      "level": 3,
+      "description": "Windows logon success.",
+      "groups": [
+        "windows",
+        "windows_security",
+        "authentication_success"
+      ],
+      "mitre": {
+        "id": [
+          "T1078"
+        ],
+        "technique": [
+          "Valid Accounts"
+        ]
+      }
+    },
+    "agent": {
+      "id": "015",
+      "name": "BACKUP-SRV",
+      "ip": "10.0.1.25"
+    },
+    "data": {
+      "win": {
+        "system": {
+          "eventID": "4624",
+          "channel": "Security",
+          "computer": "BACKUP-SRV"
+        },
+        "eventdata": {
+          "targetUserName": "SYSTEM",
+          "logonType": "5"
+        }
+      }
+    },
+    "location": "EventChannel"
+  },
+  {
+    "id": "scn-backup-0002",
+    "timestamp": "2026-11-07T02:00:05.000+0000",
+    "rule": {
+      "id": "100302",
+      "level": 10,
+      "description": "Shadow copies deleted with vssadmin.",
+      "groups": [
+        "windows",
+        "sysmon",
+        "sysmon_eid1_detections"
+      ],
+      "mitre": {
+        "id": [
+          "T1490"
+        ],
+        "technique": [
+          "Inhibit System Recovery"
+        ]
+      }
+    },
+    "agent": {
+      "id": "015",
+      "name": "BACKUP-SRV",
+      "ip": "10.0.1.25"
+    },
+    "data": {
+      "win": {
+        "system": {
+          "eventID": "1",
+          "channel": "Microsoft-Windows-Sysmon/Operational",
+          "computer": "BACKUP-SRV"
+        },
+        "eventdata": {
+          "image": "C:\\Windows\\System32\\vssadmin.exe",
+          "commandLine": "vssadmin delete shadows /for=D: /oldest /quiet",
+          "parentImage": "C:\\Program Files\\Veeam\\Endpoint Backup\\Veeam.EndPoint.Service.exe",
+          "parentCommandLine": "\"C:\\Program Files\\Veeam\\Endpoint Backup\\Veeam.EndPoint.Service.exe\" -job \"Nightly D: snapshot rotation\"",
+          "user": "NT AUTHORITY\\SYSTEM",
+          "integrityLevel": "System"
+        }
+      }
+    },
+    "location": "EventChannel"
+  }
+]

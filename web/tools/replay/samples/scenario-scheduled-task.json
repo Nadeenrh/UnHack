@@ -1,0 +1,129 @@
+[
+  {
+    "id": "scn-task-0001",
+    "timestamp": "2026-11-07T11:40:02.000+0000",
+    "rule": {
+      "id": "92154",
+      "level": 12,
+      "description": "Scheduled task created to run hidden PowerShell as SYSTEM at logon.",
+      "groups": [
+        "windows",
+        "sysmon",
+        "sysmon_eid1_detections"
+      ],
+      "mitre": {
+        "id": [
+          "T1053.005"
+        ],
+        "technique": [
+          "Scheduled Task"
+        ]
+      }
+    },
+    "agent": {
+      "id": "016",
+      "name": "BILLING-PC",
+      "ip": "10.0.1.33"
+    },
+    "data": {
+      "win": {
+        "system": {
+          "eventID": "1",
+          "channel": "Microsoft-Windows-Sysmon/Operational",
+          "computer": "BILLING-PC"
+        },
+        "eventdata": {
+          "image": "C:\\Windows\\System32\\schtasks.exe",
+          "commandLine": "schtasks /create /tn \"MicrosoftEdgeUpdateTaskCore\" /tr \"powershell -w hidden -ep bypass -f C:\\ProgramData\\edge\\upd.ps1\" /sc onlogon /ru SYSTEM /f",
+          "parentImage": "C:\\Windows\\System32\\cmd.exe",
+          "user": "NORTHFIELD\\billing",
+          "integrityLevel": "High"
+        }
+      }
+    },
+    "location": "EventChannel"
+  },
+  {
+    "id": "scn-task-0002",
+    "timestamp": "2026-11-07T11:40:02.000+0000",
+    "rule": {
+      "id": "60201",
+      "level": 8,
+      "description": "A scheduled task was created.",
+      "groups": [
+        "windows",
+        "windows_security"
+      ],
+      "mitre": {
+        "id": [
+          "T1053.005"
+        ],
+        "technique": [
+          "Scheduled Task"
+        ]
+      }
+    },
+    "agent": {
+      "id": "016",
+      "name": "BILLING-PC",
+      "ip": "10.0.1.33"
+    },
+    "data": {
+      "win": {
+        "system": {
+          "eventID": "4698",
+          "channel": "Security",
+          "computer": "BILLING-PC"
+        },
+        "eventdata": {
+          "taskName": "\\MicrosoftEdgeUpdateTaskCore",
+          "subjectUserName": "billing"
+        }
+      }
+    },
+    "location": "EventChannel"
+  },
+  {
+    "id": "scn-task-0003",
+    "timestamp": "2026-11-07T11:40:09.000+0000",
+    "rule": {
+      "id": "92302",
+      "level": 10,
+      "description": "Run key added pointing at an executable in ProgramData.",
+      "groups": [
+        "windows",
+        "sysmon",
+        "sysmon_eid13_detections"
+      ],
+      "mitre": {
+        "id": [
+          "T1547.001"
+        ],
+        "technique": [
+          "Registry Run Keys / Startup Folder"
+        ]
+      }
+    },
+    "agent": {
+      "id": "016",
+      "name": "BILLING-PC",
+      "ip": "10.0.1.33"
+    },
+    "data": {
+      "win": {
+        "system": {
+          "eventID": "13",
+          "channel": "Microsoft-Windows-Sysmon/Operational",
+          "computer": "BILLING-PC"
+        },
+        "eventdata": {
+          "image": "C:\\Windows\\System32\\reg.exe",
+          "targetObject": "HKLM\\SOFTWARE\\Microsoft\\Windows\\CurrentVersion\\Run\\EdgeUpdate",
+          "details": "C:\\ProgramData\\edge\\upd.exe",
+          "user": "NORTHFIELD\\billing"
+        }
+      }
+    },
+    "location": "EventChannel"
+  }
+]

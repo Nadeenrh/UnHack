@@ -11,6 +11,9 @@ export const metadata = { title: "Activity log" };
 const EVENT: Record<string, string> = {
   incident_created: "Incident opened",
   incident_contained: "Incident contained",
+  incident_resolved: "Incident closed as resolved",
+  incident_false_positive: "Incident closed as a false positive",
+  incident_reopened: "Incident reopened",
   agent_run_completed: "AI investigation step finished",
   investigation_completed: "Investigation finished",
   investigation_skipped: "AI investigation skipped",

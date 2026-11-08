@@ -1,0 +1,129 @@
+[
+  {
+    "id": "scn-admin-0001",
+    "timestamp": "2026-11-07T03:12:20.000+0000",
+    "rule": {
+      "id": "60109",
+      "level": 8,
+      "description": "User account created.",
+      "groups": [
+        "windows",
+        "windows_security",
+        "adduser"
+      ],
+      "mitre": {
+        "id": [
+          "T1136.001"
+        ],
+        "technique": [
+          "Local Account"
+        ]
+      }
+    },
+    "agent": {
+      "id": "017",
+      "name": "CLINIC-DC",
+      "ip": "10.0.1.10"
+    },
+    "data": {
+      "win": {
+        "system": {
+          "eventID": "4720",
+          "channel": "Security",
+          "computer": "CLINIC-DC"
+        },
+        "eventdata": {
+          "targetUserName": "svc_backup2",
+          "subjectUserName": "it-admin",
+          "subjectDomainName": "NORTHFIELD"
+        }
+      }
+    },
+    "location": "EventChannel"
+  },
+  {
+    "id": "scn-admin-0002",
+    "timestamp": "2026-11-07T03:12:31.000+0000",
+    "rule": {
+      "id": "60154",
+      "level": 12,
+      "description": "User added to the Administrators group.",
+      "groups": [
+        "windows",
+        "windows_security",
+        "group_changed"
+      ],
+      "mitre": {
+        "id": [
+          "T1098"
+        ],
+        "technique": [
+          "Account Manipulation"
+        ]
+      }
+    },
+    "agent": {
+      "id": "017",
+      "name": "CLINIC-DC",
+      "ip": "10.0.1.10"
+    },
+    "data": {
+      "win": {
+        "system": {
+          "eventID": "4732",
+          "channel": "Security",
+          "computer": "CLINIC-DC"
+        },
+        "eventdata": {
+          "memberName": "CN=svc_backup2,CN=Users,DC=northfield,DC=local",
+          "targetUserName": "Administrators",
+          "subjectUserName": "it-admin"
+        }
+      }
+    },
+    "location": "EventChannel"
+  },
+  {
+    "id": "scn-admin-0003",
+    "timestamp": "2026-11-07T03:13:05.000+0000",
+    "rule": {
+      "id": "60106",
+      "level": 3,
+      "description": "Windows logon success.",
+      "groups": [
+        "windows",
+        "windows_security",
+        "authentication_success"
+      ],
+      "mitre": {
+        "id": [
+          "T1078"
+        ],
+        "technique": [
+          "Valid Accounts"
+        ]
+      }
+    },
+    "agent": {
+      "id": "017",
+      "name": "CLINIC-DC",
+      "ip": "10.0.1.10"
+    },
+    "data": {
+      "win": {
+        "system": {
+          "eventID": "4624",
+          "channel": "Security",
+          "computer": "CLINIC-DC"
+        },
+        "eventdata": {
+          "targetUserName": "svc_backup2",
+          "ipAddress": "10.0.1.42",
+          "logonType": "3"
+        }
+      },
+      "srcip": "10.0.1.42"
+    },
+    "location": "EventChannel"
+  }
+]
