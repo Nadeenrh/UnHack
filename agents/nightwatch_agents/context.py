@@ -89,6 +89,14 @@ def build_context(request):
                 item = ("sha256", value.lower())
                 if item not in indicators:
                     indicators.append(item)
+            # Sysmon commonly supplies comma-separated HASH=value pairs.
+            # Extract only SHA256 from this known field, never arbitrary URLs.
+            if path == "/data/win/eventdata/hashes" and isinstance(value, str):
+                for match in re.finditer(r"(?:^|[,;])\s*SHA256=([a-f0-9]{64})(?=\s*(?:[,;]|$))",
+                                         value[:4096], re.I):
+                    item = ("sha256", match.group(1).lower())
+                    if item not in indicators:
+                        indicators.append(item)
             if path in ("/data/domain", "/data/query") and isinstance(value, str):
                 domain = value.lower().rstrip(".")
                 if re.fullmatch(r"(?=.{1,253}$)(?:[a-z0-9](?:[a-z0-9-]{0,61}[a-z0-9])?\.)+[a-z]{2,63}", domain):

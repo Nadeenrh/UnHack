@@ -8,7 +8,8 @@ import pytest
 from nightwatch_agents.contracts import RESULT_VALIDATOR
 from nightwatch_agents.model import ModelFailure
 from nightwatch_agents.workflow import FINAL_SCHEMA
-from tools.live_dashboard import SingleInvestigation, prepare_alerts
+from nightwatch_agents.context import build_context
+from tools.live_dashboard import EICAR_SHA256, SingleInvestigation, prepare_alerts
 
 
 class LocalModel:
@@ -44,6 +45,14 @@ def sample_request(alerts):
     return {"contract_version": "0.1", "incident_id": "gate-test",
             "org_name": "Northfield Dental Clinic", "alert": alerts[1],
             "related_events": [alerts[3], alerts[0], alerts[2]]}
+
+
+def test_combined_sample_is_explicitly_labelled_and_has_only_one_public_hash():
+    alerts, _ = prepare_alerts(with_intel=True)
+    assert all("Synthetic hackathon replay" in a["nightwatch_test_context"] for a in alerts)
+    assert alerts[-1]["data"]["win"]["eventdata"]["hashes"] == "SHA256=" + EICAR_SHA256
+    context = build_context(sample_request(alerts))
+    assert [item for item in context["indicators"] if item[0] == "sha256"] == [("sha256", EICAR_SHA256)]
 
 
 @pytest.mark.parametrize("mutation", [

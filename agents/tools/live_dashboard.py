@@ -33,6 +33,11 @@ from nightwatch_agents.model import DEFAULT_MODEL, OpenAIModel
 from nightwatch_agents.workflow import run_workflow
 from tools.live_smoke import INPUT_USD_PER_MILLION, OUTPUT_USD_PER_MILLION, PLANNED_CEILING_USD
 
+# Public antivirus test artifact; only its hash is used, never its contents.
+# https://knowledge.broadcom.com/external/article/285988/create-a-malicious-test-file-eicar.html
+EICAR_SHA256 = "275a021bbfb6489e54d471899f7db9d1663fc695ec2fe2a2c4538aabf651fd0f"
+EICAR_REPORT_URL = "https://www.virustotal.com/api/v3/files/" + EICAR_SHA256
+
 
 class SingleInvestigation:
     def __init__(self, expected_alerts, model, intel):
@@ -60,7 +65,7 @@ class SingleInvestigation:
         return self.result
 
 
-def prepare_alerts():
+def prepare_alerts(with_intel=False):
     alerts = json.loads((AGENTS.parent / "web/tools/replay/samples/clinic-attack.json").read_text())
     suffix = secrets.token_hex(4)
     host = "RECEPTION-PC-AI-TEST-" + suffix
@@ -80,18 +85,31 @@ def prepare_alerts():
             win["system"]["computer"] = host
         if "user" in win.get("eventdata", {}):
             win["eventdata"]["user"] = win["eventdata"]["user"].replace("RECEPTION-PC", host)
+    if with_intel:
+        alerts[-1]["data"]["win"]["eventdata"]["hashes"] = "SHA256=" + EICAR_SHA256
+        for alert in alerts:
+            alert["nightwatch_test_context"] = (
+                "Synthetic hackathon replay with a public EICAR antivirus test-file hash added for enrichment. "
+                "EICAR is a test artifact; no file was downloaded or executed by this replay. "
+                "Provider detections for this test artifact do not prove real malware or compromise."
+            )
     return alerts, host
 
 
-async def run(budget):
+async def run(budget, with_intel=False):
     if not PLANNED_CEILING_USD <= budget <= 0.25:
         raise ValueError("Budget does not meet the approved bounds")
     agent_config = dotenv_values(AGENTS / ".env")
     web_file = AGENTS.parent / "web/.env.local"
     web_config = dotenv_values(web_file)
-    if any((agent_config.get(name) or "false").lower() == "true" for name in (
-            "NIGHTWATCH_LIVE_CALLS_ENABLED", "NIGHTWATCH_INTEL_ENABLED")):
-        raise ValueError("Keep persistent live flags disabled")
+    if (agent_config.get("NIGHTWATCH_LIVE_CALLS_ENABLED") or "false").lower() == "true":
+        raise ValueError("Keep automatic paid model calls disabled")
+    intel_enabled = (agent_config.get("NIGHTWATCH_INTEL_ENABLED") or "false").lower() == "true"
+    if intel_enabled != with_intel:
+        raise ValueError("Intel configuration must match the explicitly selected test mode")
+    intel_key = (agent_config.get("VIRUSTOTAL_API_KEY") or "") if with_intel else ""
+    if with_intel and not intel_key.strip():
+        raise ValueError("Local VirusTotal key required; value withheld")
     if web_config.get("EXECUTOR_MODE") != "simulate":
         raise ValueError("Backend must be configured for simulated execution")
     shared = agent_config.get("AGENT_SERVICE_KEY")
@@ -102,18 +120,24 @@ async def run(budget):
         raise ValueError("Complete local API key required; value withheld")
     if agent_config.get("OPENAI_MODEL") != DEFAULT_MODEL:
         raise ValueError("Verified model snapshot required")
-    alerts, host = prepare_alerts()
-    usage, statuses = [], []
-    sent = 0
+    alerts, host = prepare_alerts(with_intel)
+    usage, statuses, intel_statuses = [], [], []
+    sent, intel_sent = 0, 0
 
     async def guard_request(request):
-        nonlocal sent
-        if str(request.url) != "https://api.openai.com/v1/responses" or request.method != "POST" or sent >= 2:
+        nonlocal sent, intel_sent
+        if str(request.url) == "https://api.openai.com/v1/responses" and request.method == "POST" and sent < 2:
+            sent += 1
+        elif with_intel and str(request.url) == EICAR_REPORT_URL and request.method == "GET" and intel_sent < 1:
+            intel_sent += 1
+        else:
             raise ValueError("Outbound request outside approved bounds")
-        sent += 1
 
     async def note_status(response):
-        statuses.append(response.status_code)
+        if response.request.url.host == "api.openai.com":
+            statuses.append(response.status_code)
+        else:
+            intel_statuses.append(response.status_code)
 
     original_reader = model_module.bounded_json
 
@@ -137,7 +161,7 @@ async def run(budget):
         async with httpx.AsyncClient(timeout=25, trust_env=False, follow_redirects=False,
                                      event_hooks={"request": [guard_request], "response": [note_status]}) as provider:
             gate = SingleInvestigation(alerts, OpenAIModel(provider, key, DEFAULT_MODEL),
-                                       ThreatIntel(provider, enabled=False))
+                                       ThreatIntel(provider, api_key=intel_key, enabled=with_intel))
             app_module = importlib.import_module("nightwatch_agents.app")
             setattr(app_module, "investigate", gate)
             app = app_module.create_app()
@@ -196,6 +220,7 @@ async def run(budget):
                 report = {
                     "ref": found["ref"], "url": page_url, "sample_host": host,
                     "live_slot_consumed": gate.used, "requests_sent": sent, "http_statuses": statuses,
+                    "virustotal_requests_sent": intel_sent, "virustotal_http_statuses": intel_statuses,
                     "input_tokens": input_tokens, "output_tokens": output_tokens,
                     "estimated_cost_usd": round((input_tokens * INPUT_USD_PER_MILLION +
                                                  output_tokens * OUTPUT_USD_PER_MILLION) / 1_000_000, 6)
@@ -205,6 +230,7 @@ async def run(budget):
                     "severity": found["severity"], "verdict": found["verdict"], "confidence": found["confidence"],
                     "data_source": found["data_source"], "injection_detected": found["injection_detected"],
                     "evidence_count": len(found["evidence"]),
+                    "virustotal_evidence": [e for e in found["evidence"] if e["source"] == "virustotal"],
                     "agent_runs": [{"agent": r["agent"], "status": r["status"], "model": r["model"]}
                                    for r in found["agent_runs"]],
                     "actions": [{"id": a["id"], "type": a["type"], "target": a["target"],
@@ -214,9 +240,14 @@ async def run(budget):
                         "http_200": page.status_code == 200, "replay_label": "Replay" in page.text,
                         "model_name": DEFAULT_MODEL in page.text,
                         "injection_warning": "Someone tried to trick the AI" in page.text,
+                        "virustotal_report": "VirusTotal report for " + EICAR_SHA256 in page.text if with_intel else None,
                     },
                 }
-                print(json.dumps(report, indent=2).replace(key, "[REDACTED]"), flush=True)
+                output = json.dumps(report, indent=2)
+                for secret in (key, intel_key):
+                    if secret:
+                        output = output.replace(secret, "[REDACTED]")
+                print(output, flush=True)
     finally:
         current = dotenv_values(web_file).get("AGENT_SERVICE_URL")
         if temporary_url is not None and current == temporary_url:
@@ -242,10 +273,12 @@ if __name__ == "__main__":
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("--live", action="store_true", required=True)
     parser.add_argument("--budget-usd", type=float, default=0.25)
+    parser.add_argument("--with-intel", action="store_true",
+                        help="Separately authorized EICAR hash report lookup; no uploads")
     args = parser.parse_args()
     logging.disable(logging.CRITICAL)
     try:
-        asyncio.run(run(args.budget_usd))
+        asyncio.run(run(args.budget_usd, args.with_intel))
     except Exception:
         print("Dashboard test stopped; sensitive diagnostics withheld. No automatic retry was made.")
         sys.exit(1)
