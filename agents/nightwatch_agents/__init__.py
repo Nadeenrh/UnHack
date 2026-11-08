@@ -1,0 +1,1 @@
+"""Stateless Nightwatch investigation service."""
