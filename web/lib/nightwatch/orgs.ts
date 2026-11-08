@@ -1,6 +1,7 @@
 // Creating client organizations and their first site.
 
 import type { OrgSector } from "@/contracts/types";
+import { isPlanId, type PlanId } from "./plans";
 import { audit } from "./audit";
 import { newId, randomToken, sha256 } from "./crypto";
 import { exec, one, type Executor } from "./db";
@@ -27,10 +28,12 @@ export function newIngestKey(): { key: string; hash: string; prefix: string } {
 }
 
 export async function createOrganization(
-  input: { name: string; sector: OrgSector; ownerUserId: string },
+  input: { name: string; sector: OrgSector; ownerUserId: string; plan?: PlanId; phone?: string | null },
   conn: Executor
 ): Promise<{ orgId: string; slug: string; siteId: string; ingestKey: string }> {
   if (!SECTORS.includes(input.sector)) throw badRequest("Unknown sector.");
+  const plan: PlanId = isPlanId(input.plan) ? input.plan : "pilot";
+  const phone = input.phone?.trim() ? input.phone.trim().slice(0, 32) : null;
 
   const base = slugify(input.name);
   let slug = base;
@@ -40,8 +43,8 @@ export async function createOrganization(
 
   const orgId = newId();
   await exec(
-    `INSERT INTO organizations (org_id, name, slug, sector, plan) VALUES (?, ?, ?, ?, 'pilot')`,
-    [orgId, input.name, slug, input.sector],
+    `INSERT INTO organizations (org_id, name, slug, sector, plan, contact_phone) VALUES (?, ?, ?, ?, ?, ?)`,
+    [orgId, input.name, slug, input.sector, plan, phone],
     conn
   );
   await exec(

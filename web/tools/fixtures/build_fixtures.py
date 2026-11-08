@@ -62,6 +62,7 @@ ORGS = [
         "name": "Maple Creek Family Health",
         "sector": "healthcare",
         "plan": "standard",
+        "phone": "416-555-0142",
         "site": "Clinic network",
         "assets": [
             ("RECEPTION-PC", "192.168.8.20", "endpoint", "Windows 11 Pro", "online"),
@@ -79,6 +80,7 @@ ORGS = [
         "name": "Northfield Dental Clinic",
         "sector": "healthcare",
         "plan": "pilot",
+        "phone": "905-555-0188",
         "site": "Clinic office",
         "assets": [
             ("FRONTDESK-PC", "10.20.0.11", "endpoint", "Windows 11 Pro", "online"),
@@ -95,6 +97,7 @@ ORGS = [
         "name": "Riverbend Accounting",
         "sector": "small_business",
         "plan": "plus",
+        "phone": "647-555-0129",
         "site": "Office network",
         "assets": [
             ("ACCT-WS-01", "172.16.4.21", "endpoint", "Windows 11 Pro", "online"),
@@ -409,7 +412,7 @@ def build():
 
     for o in ORGS:
         org = {"org_id": uid("org", o["slug"]), "name": o["name"], "slug": o["slug"], "sector": o["sector"],
-               "plan": o["plan"]}
+               "plan": o["plan"], "contact_phone": o.get("phone")}
         orgs.append(org)
         org_by_slug[o["slug"]] = org
         key = DEV_INGEST_KEYS[o["slug"]]
@@ -700,7 +703,7 @@ def write_sql(d, path: Path):
         "-- Timestamps are relative to load time (@nw_anchor), so a fresh reset always looks recent.\n"
         "USE nightwatch;\nSET time_zone = '+00:00';\nSET @nw_anchor = UTC_TIMESTAMP(3);\nSTART TRANSACTION;\n\n",
         insert("organizations", [{**o, "incident_seq": sum(1 for i in d["incidents"] if i["org_id"] == o["org_id"])}
-                                 for o in d["orgs"]], ["org_id", "name", "slug", "sector", "plan", "incident_seq"]),
+                                 for o in d["orgs"]], ["org_id", "name", "slug", "sector", "plan", "contact_phone", "incident_seq"]),
         insert("users", users, ["user_id", "first_name", "last_name", "email", "password_hash", "platform_role"]),
         insert("memberships", d["memberships"], ["org_id", "user_id", "role"]),
         insert("sites", d["sites"], ["site_id", "org_id", "name", "ingest_key_hash", "ingest_key_prefix"]),

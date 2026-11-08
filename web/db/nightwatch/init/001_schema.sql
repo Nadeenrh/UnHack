@@ -24,6 +24,7 @@ CREATE TABLE IF NOT EXISTS organizations (
   slug        VARCHAR(80)  NOT NULL UNIQUE,
   sector      ENUM('municipality','utility','community_org','small_business','other','healthcare') NOT NULL DEFAULT 'other',
   plan        ENUM('pilot','standard','plus') NOT NULL DEFAULT 'pilot',
+  contact_phone VARCHAR(32) NULL COMMENT 'client business number, for our team to reach them',
   status      ENUM('active','suspended') NOT NULL DEFAULT 'active',
   incident_seq INT UNSIGNED NOT NULL DEFAULT 0 COMMENT 'last INC-number issued; bumped atomically',
   created_at  DATETIME(3)  NOT NULL DEFAULT CURRENT_TIMESTAMP(3),

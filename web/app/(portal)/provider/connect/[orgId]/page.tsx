@@ -22,8 +22,8 @@ export default async function ClientDetailPage({ params }: { params: Promise<{ o
   if (!isUuid(orgId)) notFound();
   const baseUrl = await publicBaseUrl();
 
-  const org = await one<{ name: string; sector: string; plan: string; created_at: Date }>(
-    `SELECT name, sector, plan, created_at FROM organizations WHERE org_id = ? AND status = 'active'`,
+  const org = await one<{ name: string; sector: string; plan: string; created_at: Date; contact_phone: string | null }>(
+    `SELECT name, sector, plan, created_at, contact_phone FROM organizations WHERE org_id = ? AND status = 'active'`,
     [orgId]
   );
   if (!org) notFound();
@@ -69,6 +69,17 @@ export default async function ClientDetailPage({ params }: { params: Promise<{ o
       <div className="grid gap-6 lg:grid-cols-[minmax(0,1fr)_20rem]">
         <div className="space-y-6">
           <Panel title="Who to contact">
+            {org.contact_phone && (
+              <div className="flex items-center justify-between gap-2 border-b border-line px-5 py-3">
+                <div>
+                  <div className="font-medium">Business line</div>
+                  <a href={`tel:${org.contact_phone.replace(/[^\d+]/g, "")}`} className="text-sm text-info hover:underline">
+                    {org.contact_phone}
+                  </a>
+                </div>
+                <span className="rounded-full bg-canvas px-2 py-0.5 text-xs font-medium text-muted">Phone</span>
+              </div>
+            )}
             {contacts.length ? (
               <ul>
                 {contacts.map((c) => (

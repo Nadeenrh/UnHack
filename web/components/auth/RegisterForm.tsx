@@ -3,6 +3,7 @@
 import Link from "next/link";
 import { useState } from "react";
 import { SECTOR_LABEL } from "@/components/format";
+import { PLANS, type PlanId } from "@/lib/nightwatch/plans";
 import { Field, FormError, PrimaryButton } from "./Field";
 
 interface Created {
@@ -16,6 +17,7 @@ export function RegisterForm() {
   const [busy, setBusy] = useState(false);
   const [created, setCreated] = useState<Created | null>(null);
   const [copied, setCopied] = useState(false);
+  const [plan, setPlan] = useState<PlanId>("pilot");
 
   async function onSubmit(e: React.FormEvent<HTMLFormElement>) {
     e.preventDefault();
@@ -27,7 +29,7 @@ export function RegisterForm() {
         method: "POST",
         headers: { "content-type": "application/json" },
         body: JSON.stringify({
-          organization: { name: f.get("org_name"), sector: f.get("sector") },
+          organization: { name: f.get("org_name"), sector: f.get("sector"), phone: f.get("phone"), plan },
           user: {
             first_name: f.get("first_name"),
             last_name: f.get("last_name"),
@@ -111,12 +113,52 @@ export function RegisterForm() {
           ))}
         </select>
       </label>
+      <Field label="Phone number" name="phone" type="tel" autoComplete="tel" maxLength={32} placeholder="123-456-7890" hint="So your Nightwatch team can reach you." />
       <div className="grid grid-cols-2 gap-3">
         <Field label="First name" name="first_name" autoComplete="given-name" required />
         <Field label="Last name" name="last_name" autoComplete="family-name" required />
       </div>
       <Field label="Work email" name="email" type="email" autoComplete="email" required />
       <Field label="Password" name="password" type="password" autoComplete="new-password" required minLength={12} hint="At least 12 characters." />
+
+      <fieldset className="space-y-2">
+        <legend className="text-sm font-medium">Choose a plan</legend>
+        <p className="text-sm text-muted">Start free for 30 days. No card needed now, and you can change plan later.</p>
+        <div className="space-y-2">
+          {PLANS.map((p) => {
+            const active = plan === p.id;
+            return (
+              <label
+                key={p.id}
+                className={`flex cursor-pointer items-start gap-3 rounded-md border px-4 py-3 ${
+                  active ? "border-lantern bg-lantern-soft" : "border-line hover:bg-canvas"
+                }`}
+              >
+                <input
+                  type="radio"
+                  name="plan"
+                  value={p.id}
+                  checked={active}
+                  onChange={() => setPlan(p.id)}
+                  className="mt-1 accent-lantern"
+                />
+                <span className="flex-1">
+                  <span className="flex items-baseline justify-between gap-2">
+                    <span className="font-semibold">{p.name}</span>
+                    <span className="text-sm">
+                      <span className="font-semibold">{p.price}</span> <span className="text-muted">{p.cadence}</span>
+                    </span>
+                  </span>
+                  <span className="mt-0.5 block text-sm text-muted">
+                    {p.machines} · {p.blurb}
+                  </span>
+                </span>
+              </label>
+            );
+          })}
+        </div>
+      </fieldset>
+
       <PrimaryButton type="submit" disabled={busy}>
         {busy ? "Setting up…" : "Create organization"}
       </PrimaryButton>

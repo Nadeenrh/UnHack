@@ -8,19 +8,19 @@ SET time_zone = '+00:00';
 SET @nw_anchor = UTC_TIMESTAMP(3);
 START TRANSACTION;
 
-INSERT INTO organizations (org_id, name, slug, sector, plan, incident_seq) VALUES
-  ('fe77357f-d0cc-5345-ada4-f4d6e70e1f4d', 'Maple Creek Family Health', 'maple-creek', 'healthcare', 'standard', 4),
-  ('ad03d9e6-2963-5895-8403-2aafc5b0aa68', 'Northfield Dental Clinic', 'northfield-dental', 'healthcare', 'pilot', 4),
-  ('12440155-c5a6-5d3a-93fa-32af70f5a014', 'Riverbend Accounting', 'riverbend-accounting', 'small_business', 'plus', 1);
+INSERT INTO organizations (org_id, name, slug, sector, plan, contact_phone, incident_seq) VALUES
+  ('fe77357f-d0cc-5345-ada4-f4d6e70e1f4d', 'Maple Creek Family Health', 'maple-creek', 'healthcare', 'standard', '416-555-0142', 4),
+  ('ad03d9e6-2963-5895-8403-2aafc5b0aa68', 'Northfield Dental Clinic', 'northfield-dental', 'healthcare', 'pilot', '905-555-0188', 4),
+  ('12440155-c5a6-5d3a-93fa-32af70f5a014', 'Riverbend Accounting', 'riverbend-accounting', 'small_business', 'plus', '647-555-0129', 1);
 
 INSERT INTO users (user_id, first_name, last_name, email, password_hash, platform_role) VALUES
-  ('e3e9c4c7-dea0-5d3b-8452-d7a837d217ab', 'Nightwatch', 'Ops', 'admin@nw.test', '$2b$10$zhROuFL8lX8u42ykhWZmCO4SB5PnZ5KYcLTGlIQexL1FK6T3xC516', 'provider_admin'),
-  ('8e59d214-1879-52aa-96c3-0b49c64e37d9', 'Support', 'Analyst', 'support@nw.test', '$2b$10$zhROuFL8lX8u42ykhWZmCO4SB5PnZ5KYcLTGlIQexL1FK6T3xC516', 'provider_staff'),
-  ('b9d2c63a-07de-530f-8137-be4ea607ade8', 'Dana', 'Reyes', 'dana@maplecreek.test', '$2b$10$zhROuFL8lX8u42ykhWZmCO4SB5PnZ5KYcLTGlIQexL1FK6T3xC516', 'none'),
-  ('135ffaea-4cd6-56f3-82f6-58b66de42143', 'Sam', 'Patel', 'sam@maplecreek.test', '$2b$10$zhROuFL8lX8u42ykhWZmCO4SB5PnZ5KYcLTGlIQexL1FK6T3xC516', 'none'),
-  ('56184dab-1d56-59b4-9327-26bc64292f58', 'Leah', 'Morgan', 'leah@northfield.test', '$2b$10$zhROuFL8lX8u42ykhWZmCO4SB5PnZ5KYcLTGlIQexL1FK6T3xC516', 'none'),
-  ('1dee0cb7-d4ab-522b-a7b5-83b48ac6766c', 'Chris', 'Wu', 'chris@northfield.test', '$2b$10$zhROuFL8lX8u42ykhWZmCO4SB5PnZ5KYcLTGlIQexL1FK6T3xC516', 'none'),
-  ('0a9a820c-44f6-518a-b64a-fec61784b396', 'Omar', 'Haddad', 'omar@riverbend.test', '$2b$10$zhROuFL8lX8u42ykhWZmCO4SB5PnZ5KYcLTGlIQexL1FK6T3xC516', 'none');
+  ('e3e9c4c7-dea0-5d3b-8452-d7a837d217ab', 'Nightwatch', 'Ops', 'admin@nw.test', '$2b$10$YivdP92O6eWagvl9DuIgROJfrSMqg9U/BWwwDHxAqC5f1q7joOA5a', 'provider_admin'),
+  ('8e59d214-1879-52aa-96c3-0b49c64e37d9', 'Support', 'Analyst', 'support@nw.test', '$2b$10$YivdP92O6eWagvl9DuIgROJfrSMqg9U/BWwwDHxAqC5f1q7joOA5a', 'provider_staff'),
+  ('b9d2c63a-07de-530f-8137-be4ea607ade8', 'Dana', 'Reyes', 'dana@maplecreek.test', '$2b$10$YivdP92O6eWagvl9DuIgROJfrSMqg9U/BWwwDHxAqC5f1q7joOA5a', 'none'),
+  ('135ffaea-4cd6-56f3-82f6-58b66de42143', 'Sam', 'Patel', 'sam@maplecreek.test', '$2b$10$YivdP92O6eWagvl9DuIgROJfrSMqg9U/BWwwDHxAqC5f1q7joOA5a', 'none'),
+  ('56184dab-1d56-59b4-9327-26bc64292f58', 'Leah', 'Morgan', 'leah@northfield.test', '$2b$10$YivdP92O6eWagvl9DuIgROJfrSMqg9U/BWwwDHxAqC5f1q7joOA5a', 'none'),
+  ('1dee0cb7-d4ab-522b-a7b5-83b48ac6766c', 'Chris', 'Wu', 'chris@northfield.test', '$2b$10$YivdP92O6eWagvl9DuIgROJfrSMqg9U/BWwwDHxAqC5f1q7joOA5a', 'none'),
+  ('0a9a820c-44f6-518a-b64a-fec61784b396', 'Omar', 'Haddad', 'omar@riverbend.test', '$2b$10$YivdP92O6eWagvl9DuIgROJfrSMqg9U/BWwwDHxAqC5f1q7joOA5a', 'none');
 
 INSERT INTO memberships (org_id, user_id, role) VALUES
   ('fe77357f-d0cc-5345-ada4-f4d6e70e1f4d', 'b9d2c63a-07de-530f-8137-be4ea607ade8', 'owner'),

@@ -6,6 +6,7 @@ import { newId } from "@/lib/nightwatch/crypto";
 import { one, tx } from "@/lib/nightwatch/db";
 import { badRequest, clientIp, conflict, readJson, str } from "@/lib/nightwatch/http";
 import { createOrganization, SECTORS } from "@/lib/nightwatch/orgs";
+import { isPlanId, type PlanId } from "@/lib/nightwatch/plans";
 import { open } from "@/lib/nightwatch/route";
 
 const EMAIL = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
@@ -21,7 +22,7 @@ const EMAIL = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 // Not built yet (zero-spend MVP): email verification. Add it before real customers sign up.
 export const POST = open(async (req) => {
   const body = await readJson<{
-    organization?: { name?: unknown; sector?: unknown };
+    organization?: { name?: unknown; sector?: unknown; plan?: unknown; phone?: unknown };
     user?: { first_name?: unknown; last_name?: unknown; email?: unknown; password?: unknown };
   }>(req);
   const org = body.organization ?? {};
@@ -30,6 +31,8 @@ export const POST = open(async (req) => {
   const orgName = str(org.name, "Organization name", { min: 2, max: 150 });
   const sector = String(org.sector ?? "") as OrgSector;
   if (!SECTORS.includes(sector)) throw badRequest(`Sector must be one of: ${SECTORS.join(", ")}.`);
+  const plan: PlanId = isPlanId(org.plan) ? org.plan : "pilot";
+  const phone = typeof org.phone === "string" && org.phone.trim() ? org.phone.trim().slice(0, 32) : null;
 
   const firstName = str(user.first_name, "First name", { max: 100 });
   const lastName = str(user.last_name, "Last name", { max: 100 });
@@ -51,7 +54,7 @@ export const POST = open(async (req) => {
       [userId, firstName, lastName, email, passwordHash]
     );
     await audit({ orgId: null, actorType: "user", actorId: userId, event: "user_registered" }, conn);
-    return createOrganization({ name: orgName, sector, ownerUserId: userId }, conn);
+    return createOrganization({ name: orgName, sector, ownerUserId: userId, plan, phone }, conn);
   });
 
   const token = await createSession(userId, { ip: clientIp(req), userAgent: req.headers.get("user-agent") });
