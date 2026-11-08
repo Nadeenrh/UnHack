@@ -31,6 +31,7 @@ uses its own machine name so it becomes exactly one incident.
 
 | File | Attack | MITRE |
 | --- | --- | --- |
+| scenario-malware-c2.json | Fake "PatientForm_Update.exe" installs itself, adds a Run key and beacons to an attacker server. Ends on "Needs your decision" (block the IP) | T1204.002, T1547.001, T1071.001 |
 | scenario-phishing-macro.json | Word macro starts hidden PowerShell, downloads and runs a payload | T1566.001, T1059.001 |
 | scenario-lsass-dump.json | LSASS memory dumped with comsvcs.dll (credential theft) | T1003.001 |
 | scenario-rdp-bruteforce.json | Remote Desktop password guessing from the internet, then success | T1110.001, T1021.001 |
