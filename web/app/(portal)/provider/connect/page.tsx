@@ -10,6 +10,12 @@ export const metadata = { title: "Connect a client" };
 // A client counts as connected once Wazuh has delivered at least one alert with their key.
 const QUIET_AFTER_MS = 24 * 60 * 60 * 1000;
 
+function connection(last: string | null, now = Date.now()): [string, string] {
+  if (!last) return ["Waiting for the first alert", "bg-muted"];
+  if (now - new Date(last).getTime() > QUIET_AFTER_MS) return [`Quiet since ${timeAgo(last)}`, "bg-lantern"];
+  return [`Receiving, last ${timeAgo(last)}`, "bg-ok"];
+}
+
 export default async function ProviderConnectPage() {
   await requirePageProvider();
   const baseUrl = await publicBaseUrl();
@@ -27,7 +33,6 @@ export default async function ProviderConnectPage() {
             (SELECT COUNT(*) FROM assets m WHERE m.org_id = o.org_id) AS machines
      FROM organizations o WHERE o.status = 'active' ORDER BY o.name`
   );
-  const now = Date.now();
 
   return (
     <>
@@ -51,13 +56,7 @@ export default async function ProviderConnectPage() {
                 </thead>
                 <tbody>
                   {clients.map((c) => {
-                    const last = iso(c.last_alert);
-                    const state = !last ? "waiting" : now - new Date(last).getTime() > QUIET_AFTER_MS ? "quiet" : "receiving";
-                    const [label, dot] = {
-                      waiting: ["Waiting for the first alert", "bg-muted"],
-                      quiet: [`Quiet since ${timeAgo(last)}`, "bg-lantern"],
-                      receiving: [`Receiving, last ${timeAgo(last)}`, "bg-ok"],
-                    }[state];
+                    const [label, dot] = connection(iso(c.last_alert));
                     return (
                       <tr key={c.org_id} className="border-b border-line last:border-0">
                         <td className="px-5 py-3">
