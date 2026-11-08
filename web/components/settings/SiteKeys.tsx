@@ -1,7 +1,6 @@
 "use client";
 
 import { useState } from "react";
-import { IntegrationSnippet } from "@/components/connect/IntegrationSnippet";
 
 export interface SiteRow {
   id: string;
@@ -11,7 +10,7 @@ export interface SiteRow {
 }
 
 /** Ingest keys: only the first characters are ever shown; a new key is shown once. */
-export function SiteKeys({ orgId, sites, editable, hookUrl }: { orgId: string; sites: SiteRow[]; editable: boolean; hookUrl: string }) {
+export function SiteKeys({ orgId, sites, editable }: { orgId: string; sites: SiteRow[]; editable: boolean }) {
   const [fresh, setFresh] = useState<{ siteId: string; key: string } | null>(null);
   const [error, setError] = useState<string | null>(null);
   const [busy, setBusy] = useState<string | null>(null);
@@ -58,8 +57,7 @@ export function SiteKeys({ orgId, sites, editable, hookUrl }: { orgId: string; s
             <div className="mt-3 rounded-md border-2 border-lantern bg-lantern-soft p-3 text-sm">
               <p className="font-medium">New key. Copy it now: it won&apos;t be shown again.</p>
               <code className="mt-2 block font-mono break-all">{fresh.key}</code>
-              <p className="mt-3">Update your Wazuh server&apos;s ossec.conf with it, then restart wazuh-manager:</p>
-              <IntegrationSnippet hookUrl={hookUrl} ingestKey={fresh.key} />
+              <p className="mt-2">Send it to your Nightwatch team. Alerts stop arriving until they switch your connection to the new key.</p>
             </div>
           )}
         </li>

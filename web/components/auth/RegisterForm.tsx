@@ -2,7 +2,6 @@
 
 import Link from "next/link";
 import { useState } from "react";
-import { IntegrationSnippet } from "@/components/connect/IntegrationSnippet";
 import { SECTOR_LABEL } from "@/components/format";
 import { Field, FormError, PrimaryButton } from "./Field";
 
@@ -12,7 +11,7 @@ interface Created {
   ingestKey: string;
 }
 
-export function RegisterForm({ baseUrl, loopback }: { baseUrl: string; loopback: boolean }) {
+export function RegisterForm() {
   const [error, setError] = useState<string | null>(null);
   const [busy, setBusy] = useState(false);
   const [created, setCreated] = useState<Created | null>(null);
@@ -76,27 +75,19 @@ export function RegisterForm({ baseUrl, loopback }: { baseUrl: string; loopback:
         >
           {copied ? "Copied" : "Copy key"}
         </button>
-        <div className="border-t border-line pt-4">
-          <h2 className="font-semibold">Next: connect your first machine</h2>
-          <p className="mt-1 text-sm text-muted">
-            Paste this into your Wazuh server&apos;s <span className="font-mono">ossec.conf</span>. Your key is already in it. The full
-            steps are on the Connect machines page.
-          </p>
-          {loopback && (
-            <p className="mt-2 rounded-md bg-lantern-soft px-3 py-2 text-xs">
-              Swap <span className="font-mono">{new URL(baseUrl).host}</span>{" "}for this computer&apos;s network address so Wazuh can reach it.
-            </p>
-          )}
-          <IntegrationSnippet hookUrl={`${baseUrl}/api/v1/ingest/wazuh`} ingestKey={created.ingestKey} />
+        <div className="rounded-md bg-canvas px-4 py-3 text-sm">
+          <p className="font-semibold">What happens next</p>
+          <ol className="mt-2 list-decimal space-y-1 pl-5 text-muted">
+            <li>Send this key to your Nightwatch team.</li>
+            <li>They connect your computers through Wazuh. Nothing to install on your side.</li>
+            <li>Your computers appear under Machines on their own, and Nightwatch starts watching.</li>
+          </ol>
         </div>
         <Link
-          href={`/app/${created.orgId}/connect`}
+          href={`/app/${created.orgId}`}
           className="block w-full rounded-md bg-ink px-4 py-2.5 text-center font-semibold text-night hover:bg-ink-soft"
         >
-          I&apos;ve saved it, show me the setup steps
-        </Link>
-        <Link href={`/app/${created.orgId}`} className="block text-center text-sm font-medium text-info hover:underline">
-          Skip for now, go to my dashboard
+          I&apos;ve saved it, go to my dashboard
         </Link>
       </div>
     );

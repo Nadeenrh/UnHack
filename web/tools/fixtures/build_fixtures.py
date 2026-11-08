@@ -320,6 +320,31 @@ INCIDENTS = [
 
 ACTION_RISK = {a: r for a, r, _ in DEFAULT_POLICY}
 
+
+# What each agent "said" about an incident, built from the incident's own facts so it stays specific.
+INTEL_SOURCES = {"virustotal", "urlscan"}
+ACTION_WORDS = {"block_ip": "block", "block_domain": "block", "isolate_host": "isolate", "quarantine_file": "quarantine",
+                "disable_account": "disable account", "notify_only": "notify"}
+
+
+def triage_note(inc) -> str:
+    return (f"Rated it {inc['severity']}, {inc['verdict']} ({round(inc['confidence'] * 100)}% sure), "
+            f"from {len(inc['evidence'])} events on {', '.join(inc['assets'])}.")
+
+
+def intel_note(inc) -> str:
+    found = [claim for claim, source, _ in inc["evidence"] if source in INTEL_SOURCES]
+    if found:
+        return "Reputation check: " + found[0][0].lower() + found[0][1:] + "."
+    return "No outside reputation data for these addresses yet. Judged on behaviour alone."
+
+
+def investigator_note(inc) -> str:
+    acts = [f"{ACTION_WORDS[a[0]]} {a[1] if not a[1].startswith('sha256:') else 'the file'}" for a in inc["actions"]]
+    if not acts:
+        return f"Built a timeline from {len(inc['evidence'])} events. No action needed."
+    return f"Built a timeline from {len(inc['evidence'])} events and recommended: {'; '.join(acts)}."
+
 # ---------------------------------------------------------------------------
 # Build
 # ---------------------------------------------------------------------------
@@ -465,9 +490,9 @@ def build():
             started = created + timedelta(seconds=5 + i * 12)
             finished = started + timedelta(seconds=9)
             summary = {
-                "triage": f"Rated {inc['severity']} / {inc['verdict']}.",
-                "intel": "Checked indicators against cached threat intel.",
-                "investigator": f"Built a timeline from {len(inc['evidence'])} events.",
+                "triage": triage_note(inc),
+                "intel": intel_note(inc),
+                "investigator": investigator_note(inc),
             }[agent]
             rid = uid("run", iid, agent)
             runs.append({"run_id": rid, "org_id": org_id, "incident_id": iid, "agent": agent, "status": "succeeded",

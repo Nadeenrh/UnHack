@@ -60,8 +60,7 @@ export function ActivityChart({ buckets }: { buckets: HourBucket[] }) {
         </div>
       </div>
 
-      <table className="sr-only">
-        <caption>Alerts per hour, last 24 hours</caption>
+      <table className="sr-only" aria-label="Alerts per hour, last 24 hours">
         <thead>
           <tr>
             <th>Hour</th>
