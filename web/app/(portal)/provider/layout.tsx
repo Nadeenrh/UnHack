@@ -7,6 +7,7 @@ export default async function ProviderLayout({ children }: { children: React.Rea
     <Shell
       nav={[
         { href: "/provider", label: "Clients", exact: true },
+        { href: "/provider/agents", label: "AI agents" },
         { href: "/provider/connect", label: "Connect a client" },
       ]}
       user={{ name: `${session.firstName} ${session.lastName}`, email: session.email }}

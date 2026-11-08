@@ -14,7 +14,7 @@ INSERT INTO organizations (org_id, name, slug, sector, plan, contact_phone, inci
   ('12440155-c5a6-5d3a-93fa-32af70f5a014', 'Riverbend Accounting', 'riverbend-accounting', 'small_business', 'plus', '647-555-0129', 1);
 
 INSERT INTO users (user_id, first_name, last_name, email, password_hash, platform_role) VALUES
-  ('e3e9c4c7-dea0-5d3b-8452-d7a837d217ab', 'Nightwatch', 'Ops', 'admin@nw.test', '$2b$10$YivdP92O6eWagvl9DuIgROJfrSMqg9U/BWwwDHxAqC5f1q7joOA5a', 'provider_admin'),
+  ('e3e9c4c7-dea0-5d3b-8452-d7a837d217ab', 'NightWatch', 'Ops', 'admin@nw.test', '$2b$10$YivdP92O6eWagvl9DuIgROJfrSMqg9U/BWwwDHxAqC5f1q7joOA5a', 'provider_admin'),
   ('8e59d214-1879-52aa-96c3-0b49c64e37d9', 'Support', 'Analyst', 'support@nw.test', '$2b$10$YivdP92O6eWagvl9DuIgROJfrSMqg9U/BWwwDHxAqC5f1q7joOA5a', 'provider_staff'),
   ('b9d2c63a-07de-530f-8137-be4ea607ade8', 'Dana', 'Reyes', 'dana@maplecreek.test', '$2b$10$YivdP92O6eWagvl9DuIgROJfrSMqg9U/BWwwDHxAqC5f1q7joOA5a', 'none'),
   ('135ffaea-4cd6-56f3-82f6-58b66de42143', 'Sam', 'Patel', 'sam@maplecreek.test', '$2b$10$YivdP92O6eWagvl9DuIgROJfrSMqg9U/BWwwDHxAqC5f1q7joOA5a', 'none'),
