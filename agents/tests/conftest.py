@@ -7,6 +7,12 @@ import pytest
 
 @pytest.fixture(autouse=True)
 def isolated_environment(monkeypatch):
+    from nightwatch_agents import intel
+    from nightwatch_agents.intel_limits import IntelBudget
+
+    # Every test gets an independent in-memory operational budget; adapters
+    # within one test still share it, matching concurrent service requests.
+    monkeypatch.setattr(intel, "_shared_budget", IntelBudget())
     monkeypatch.setenv("NIGHTWATCH_LIVE_CALLS_ENABLED", "false")
     monkeypatch.setenv("NIGHTWATCH_INTEL_ENABLED", "false")
     monkeypatch.delenv("OPENAI_API_KEY", raising=False)

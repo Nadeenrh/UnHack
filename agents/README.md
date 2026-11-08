@@ -26,6 +26,7 @@ VirusTotal reports. An LLM is not needed to choose endpoints or report engine co
 | `context.py` | Bounded log context, exact evidence references, injection heuristic |
 | `model.py` | Configurable Responses API adapter with strict structured output |
 | `intel.py` | Indicator validation and bounded allowlisted report retrieval |
+| `intel_limits.py` | Single-process operational request budget and provider cooldown |
 | `workflow.py` | SOC → intel → SOC orchestration and result assembly |
 | `fallback.py` | Conservative rule-based results and request-local stage progress |
 
@@ -105,8 +106,9 @@ Uvicorn loads `.env` only when explicitly passed. Service authentication is read
 at startup; workflow configuration is read per request. During local integration,
 ignored `agents/.env` and `web/.env.local` were configured with a matching generated
 service credential. Its value was not displayed. Explicitly authorized live
-OpenAI investigations were later tested as documented below. VirusTotal remains
-disabled and has not been queried live.
+OpenAI investigations were later tested as documented below. VirusTotal was
+subsequently enabled for explicitly authorized noncommercial prototype checks,
+also documented below. Automatic OpenAI calls remain disabled.
 
 ## Model and spending limits
 
@@ -226,7 +228,8 @@ Do not enable while using sensitive indicators: VirusTotal states that queried
 IPs/domains may be scanned and added to its community dataset.
 
 The service only performs fixed-host GET report requests for validated source IPs,
-explicit SHA-256 fields, and `data.domain`/`data.query` domains. It does not browse
+explicit SHA-256 fields (including Sysmon `data.win.eventdata.hashes` SHA256 pairs),
+and `data.domain`/`data.query` domains. It does not browse
 log URLs, fetch attacker hosts, upload files or request scans. Private, loopback,
 link-local, multicast, documentation and other non-global IPs are skipped, as are
 known asset IPs and reserved/internal domain suffixes. IPv4-mapped/transition IPv6
@@ -241,6 +244,70 @@ timeouts are **unavailable**, never clean or malicious. Historical provider coun
 are rendered by code with the report's analysis time and retrieval time. The SOC
 does not author provider evidence. Common provider/reputation claims in model prose
 are rejected; validated provider summaries are appended by the service instead.
+
+The adapter now shares a thread-safe operational budget across concurrent
+investigations **inside one Python process**: at most four attempts per rolling
+minute and 500 per rolling 24 hours. Every outgoing attempt consumes a slot,
+including failures/timeouts. Exhausted quota returns unavailable immediately; it
+does not wait inside the investigation deadline. A provider 429 starts a shared
+cooldown using bounded `Retry-After` seconds/HTTP-date, or 60 seconds by default.
+There are no retries. Auth errors, missing reports and provider failures have
+distinct sanitized availability labels. Redirects are refused even if a supplied
+HTTP client permits them. Duplicate indicators within one investigation are looked
+up once. No incident data or reports are cached across investigations; shared state
+contains only operational timestamps and a cooldown deadline.
+
+Use **one service worker** for this configuration. Counters reset when the process
+restarts and cannot account for other tools using the same provider account.
+Multiple workers/replicas need a centralized quota coordinator, owned by the backend
+or another explicitly agreed service. Do not treat these process-local counters as
+an account-wide guarantee or bypass provider quotas by restarting the service.
+
+The public API documentation lists 4 requests/minute and 500/day, and restrictions
+against commercial products/services and certain business workflows. Confirm that
+your license permits the intended use before live activation; a free account alone
+does not establish permission for a deployed clinic workflow. See
+[provider restrictions](https://docs.virustotal.com/reference/public-vs-premium-api).
+
+To test the intel adapter **without OpenAI, backend changes or paid inference**,
+use its separate smoke tool. This command validates syntax only and makes no calls:
+
+```bash
+# From agents/:
+.venv/bin/python tools/intel_smoke.py --check --kind ip --indicator 8.8.8.8
+```
+
+A separately authorized `--live` run makes exactly one report lookup using the
+existing local `VIRUSTOTAL_API_KEY`; it does not change persistent flags, upload
+files, submit URLs, invoke OpenAI or execute actions. Only test an approved public
+indicator with appropriate account access. Missing/not-found reports stay
+unavailable. Never paste the provider key into chat or put it in a command.
+The implementation was tested offline first. On November 8, 2026, one separately
+authorized standalone lookup for `8.8.8.8` returned validated report evidence,
+without OpenAI calls, uploads, persistence or execution. Mixed engine results
+were reported as counts rather than interpreted as proof that the IP is malicious.
+
+A further authorized combined UI test used `tools/live_dashboard.py --live
+--with-intel --budget-usd 0.25`. This mode adds only the public EICAR test-file
+SHA-256 to a labelled synthetic clinic replay. It permits at most two OpenAI
+requests and one GET to that exact VirusTotal hash-report URL, with the normal
+quota guard active. It never creates, downloads or uploads the test file. The
+temporary backend connection is restored after the investigation.
+
+That test passed as Northfield `INC-0009`: both SOC stages and intel succeeded;
+one validated VirusTotal evidence record persisted in MySQL and rendered on the
+dashboard. Both OpenAI responses and the VirusTotal response were HTTP 200.
+OpenAI usage was 8,960 input and 692 output tokens, estimated US$0.009834 at
+standard rates; the end-to-end run took 11.83 seconds. The provider returned
+64 malicious and 3 undetected engine results for the EICAR test artifact. Those
+are test-artifact detections, not proof of real malware execution or compromise.
+Private-IP enrichment stayed skipped; bounded-context omissions were labelled.
+The proposed block remained awaiting approval; notification completed only via
+simulation with `verified=false`. No real blocking occurred.
+
+The local intel flag is enabled, while automatic OpenAI calls remain false, so
+the normal service still returns offline fallback. Keys were not displayed or
+copied into other files. No additional lookup is authorized by these test notes.
 
 Provider sources: [IP reports and dataset inclusion](https://docs.virustotal.com/reference/ip-info),
 [IP report fields](https://docs.virustotal.com/reference/ip-object),
