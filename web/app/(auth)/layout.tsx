@@ -2,9 +2,10 @@ import Link from "next/link";
 import { Logo } from "@/components/shell/Logo";
 
 export default function AuthLayout({ children }: { children: React.ReactNode }) {
+  // group: if the page puts its own logo in the card (data-brand, sign-in does), hide this one and centre the card.
   return (
-    <div className="flex min-h-screen flex-col items-center bg-sidebar px-4 py-12 text-ink">
-      <Link href="/" className="mb-8 flex items-center gap-2.5">
+    <div className="group flex min-h-screen flex-col items-center bg-sidebar px-4 py-12 text-ink has-[[data-brand]]:justify-center">
+      <Link href="/" className="mb-8 flex items-center gap-2.5 group-has-[[data-brand]]:hidden">
         <Logo size={34} />
         <span className="text-2xl font-semibold tracking-tight">Nightwatch</span>
       </Link>
